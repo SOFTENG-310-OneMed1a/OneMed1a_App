@@ -79,14 +79,16 @@ export default function SignupPage() {
                 name="gender"
                 autoComplete="sex"
                 required
+                defaultValue=""
                 className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   Select gender
                 </option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="non-binary">Non-binary</option>
+                <option value="prefer-not-to-say">Prefer not to say</option>
               </select>
             </div>
             <div>
