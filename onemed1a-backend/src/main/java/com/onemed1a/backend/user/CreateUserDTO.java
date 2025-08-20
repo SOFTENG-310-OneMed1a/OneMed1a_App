@@ -12,9 +12,15 @@ import lombok.NoArgsConstructor;
 
 @Data @NoArgsConstructor @AllArgsConstructor
 public class CreateUserDTO {
-    @NotBlank private String firstName;
-    @NotBlank private String lastName;
-    @Email @NotBlank private String email;
+    @NotBlank 
+    private String firstName;
+    @NotBlank 
+    private String lastName;
+    @Email 
+    @NotBlank 
+    private String email;
     private Gender gender = Gender.UNSPECIFIED;
     private LocalDate dateOfBirth;
+    @NotBlank
+    private String password;
 }

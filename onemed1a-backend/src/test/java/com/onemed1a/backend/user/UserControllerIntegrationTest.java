@@ -34,14 +34,19 @@ class UserControllerIntegrationTest {
 
     UUID userId;
     String createdEmail;
+    String plainPassword = "Test123!";
 
     @BeforeEach
     void setup() throws Exception {
         createdEmail = "alice+" + UUID.randomUUID() + "@example.com";
 
         CreateUserDTO body = new CreateUserDTO(
-                "Alice", "Ng", createdEmail,
-                User.Gender.UNSPECIFIED, LocalDate.of(2001, 7, 15));
+                "Alice",
+                "Ng", 
+                createdEmail,
+                User.Gender.UNSPECIFIED, 
+                LocalDate.of(2001, 7, 15),
+                plainPassword);
 
         MvcResult result = mvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -52,6 +57,10 @@ class UserControllerIntegrationTest {
         JsonNode json = om.readTree(result.getResponse().getContentAsString());
         userId = java.util.UUID.fromString(json.get("id").asText());
         assertThat(userId).isNotNull();
+
+        User createdUser = repo.findById(userId).orElseThrow();
+        assertThat(createdUser.getPassword()).isNotNull();
+        assertThat(createdUser.getPassword()).isNotEqualTo(plainPassword);
     }
 
     @Test
