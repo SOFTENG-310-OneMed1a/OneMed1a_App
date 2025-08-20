@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +18,7 @@ public class UserService {
     private static final String USER_NOT_FOUND = "User not found";
 
     private final UserRepository repo;
+    private final PasswordEncoder passwordEncoder;
 
     public UserDTO create(CreateUserDTO dto) {
         if (repo.existsByEmail(dto.getEmail())) {
@@ -29,6 +31,7 @@ public class UserService {
                 .email(dto.getEmail())
                 .gender(dto.getGender())
                 .dateOfBirth(dto.getDateOfBirth())
+                .password(passwordEncoder.encode(dto.getPassword()))
                 .active(true)
                 .build();
 
