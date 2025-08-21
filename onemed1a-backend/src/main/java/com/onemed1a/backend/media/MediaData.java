@@ -41,6 +41,7 @@ public class MediaData {
 
 //     Stores genres in a simple join table: media_genres(media_id, genre)
     @ElementCollection
+    @Builder.Default
     @Column(name = "genre", nullable = false)
     private List<String> genres = new ArrayList<>();
 
@@ -52,10 +53,6 @@ public class MediaData {
 
     @Column(name = "backdrop_url", columnDefinition = "TEXT")
     private String backdropUrl;
-
-//    // Store raw provider payload or extra fields as JSON (Postgres jsonb)
-//    @Column(name = "metadata_json", columnDefinition = "jsonb")
-//    private String metadataJson;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
