@@ -31,7 +31,7 @@ public class UserService {
                 .email(dto.getEmail())
                 .gender(dto.getGender())
                 .dateOfBirth(dto.getDateOfBirth())
-                .password(passwordEncoder.encode(dto.getPassword()))
+                .password((dto.getPassword()))
                 .active(true)
                 .build();
 
