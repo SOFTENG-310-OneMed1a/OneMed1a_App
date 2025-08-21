@@ -22,19 +22,19 @@ public class AppConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.cors(Customizer.withDefaults()) // enable CORS
-                   .csrf(csrf -> csrf.disable()) // disable CSRF for APIs
-                   .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) // no auth for now
+        return http.cors(Customizer.withDefaults()) 
+                   .csrf(csrf -> csrf.disable()) 
+                   .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) 
                    .build();
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
-        cfg.setAllowedOriginPatterns(List.of("http://localhost:3000")); // allow your frontend
+        cfg.setAllowedOriginPatterns(List.of("http://localhost:3000")); 
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         cfg.setAllowedHeaders(List.of("*"));
-        cfg.setAllowCredentials(true); // important if frontend sends cookies or auth headers
+        cfg.setAllowCredentials(true); 
         cfg.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

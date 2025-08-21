@@ -31,7 +31,7 @@ public class UserService {
                 .email(dto.getEmail())
                 .gender(dto.getGender())
                 .dateOfBirth(dto.getDateOfBirth())
-                .password((dto.getPassword()))
+                .password(passwordEncoder.encode(dto.getPassword()))
                 .active(true)
                 .build();
 
@@ -48,6 +48,21 @@ public class UserService {
 
         return map(user);
     }
+
+    public UserDTO checkCredentials(String email, String password) {
+    User user = repo.findByEmail(email)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
+
+    if (!user.isActive()) {
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is inactive");
+    }
+
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+    }
+
+    return map(user);
+}
 
     public UserDTO getProfile(UUID id) {
         return getById(id);
@@ -74,7 +89,7 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
 
         if (!user.isActive()) {
-            return; // already inactive; treat as idempotent
+            return; 
         }
 
         user.setActive(false);
