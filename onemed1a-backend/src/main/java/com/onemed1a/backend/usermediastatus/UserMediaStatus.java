@@ -1,5 +1,7 @@
-package com.onemed1a.backend.usermedia;
+package com.onemed1a.backend.usermediastatus;
 
+import com.onemed1a.backend.media.MediaData;
+import com.onemed1a.backend.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -15,19 +17,20 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "user_media_status")
-public class UserMedia {
+public class UserMediaStatus {
 
-    // Primary key just for this table
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(name = "media_id", nullable = false)
-    private UUID mediaId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "media_id", nullable = false)
+    private MediaData media;
 
     public enum Status {
         COMPLETED, WATCHING, PLAN_TO_WATCH

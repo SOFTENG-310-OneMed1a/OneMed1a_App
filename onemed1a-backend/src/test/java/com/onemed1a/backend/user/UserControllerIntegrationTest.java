@@ -32,7 +32,7 @@ class UserControllerIntegrationTest {
     @Autowired ObjectMapper om;
     @Autowired UserRepository repo;
 
-    Long userId;
+    UUID userId;
     String createdEmail;
 
     @BeforeEach
@@ -50,7 +50,7 @@ class UserControllerIntegrationTest {
                 .andReturn();
 
         JsonNode json = om.readTree(result.getResponse().getContentAsString());
-        userId = json.get("id").asLong();
+        userId = java.util.UUID.fromString(json.get("id").asText());
         assertThat(userId).isNotNull();
     }
 

@@ -2,6 +2,7 @@ package com.onemed1a.backend.user;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -28,7 +29,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column(name="first_name", nullable=false)
     private String firstName;

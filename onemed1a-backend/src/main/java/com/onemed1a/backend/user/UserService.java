@@ -7,6 +7,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -33,7 +35,7 @@ public class UserService {
         return map(repo.save(user));
     }
 
-    public UserDTO getById(Long id) {
+    public UserDTO getById(UUID id) {
         User user = repo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
 
@@ -44,11 +46,11 @@ public class UserService {
         return map(user);
     }
 
-    public UserDTO getProfile(Long id) {
+    public UserDTO getProfile(UUID id) {
         return getById(id);
     }
 
-    public UserDTO updateProfile(Long id, UpdateUserDTO dto) {
+    public UserDTO updateProfile(UUID id, UpdateUserDTO dto) {
         User user = repo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
 
@@ -64,7 +66,7 @@ public class UserService {
         return map(repo.save(user));
     }
 
-    public void deactivate(Long id) {
+    public void deactivate(UUID id) {
         User user = repo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
 

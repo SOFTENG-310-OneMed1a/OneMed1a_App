@@ -14,10 +14,13 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/media")
 
 public class MediaDataController {
-    private MediaDataService mediaDataService;
+
+    private final MediaDataService mediaDataService;
+
     public MediaDataController(MediaDataService mediaDataService) {
         this.mediaDataService = mediaDataService;
     }
+
     @RequestMapping
     public List<MediaData> getAllMedia(
         @RequestParam(required = false) String q,

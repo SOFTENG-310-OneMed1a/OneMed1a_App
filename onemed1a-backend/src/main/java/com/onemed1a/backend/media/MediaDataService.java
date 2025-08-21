@@ -1,11 +1,14 @@
 package com.onemed1a.backend.media;
 
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Service
 public class MediaDataService {
-    private MediaDataRepository mediaDataRepository;
+    private final MediaDataRepository mediaDataRepository;
     public MediaDataService(MediaDataRepository mediaDataRepository) {
         this.mediaDataRepository = mediaDataRepository;
     }

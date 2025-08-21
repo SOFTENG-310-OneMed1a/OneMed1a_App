@@ -1,6 +1,7 @@
 package com.onemed1a.backend.user;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,8 @@ class UserServiceTest {
 
     @Test
     void create_savesUser() {
+        UUID userId = UUID.randomUUID();
+
         // Arrange
         CreateUserDTO dto = new CreateUserDTO(
                 "Jane", "Smith", "jane@example.com",
@@ -31,7 +34,7 @@ class UserServiceTest {
         when(repo.existsByEmail("jane@example.com")).thenReturn(false);
 
         User saved = User.builder()
-                .id(1L)
+                .id(userId)
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .email(dto.getEmail())

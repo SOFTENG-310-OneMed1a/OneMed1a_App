@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
@@ -30,25 +32,25 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public UserDTO getById(@PathVariable Long id) {
+    public UserDTO getById(@PathVariable UUID id) {
         return service.getById(id);
     }
 
     // --- Current user (/me) routes ---
     @GetMapping("/me")
-    public UserDTO getProfile(@RequestHeader("X-User-Id") Long userId) {
+    public UserDTO getProfile(@RequestHeader("X-User-Id") UUID userId) {
         return service.getProfile(userId);
     }
 
     @PutMapping("/me")
-    public UserDTO updateMe(@RequestHeader("X-User-Id") Long userId,
+    public UserDTO updateMe(@RequestHeader("X-User-Id") UUID userId,
                             @Valid @RequestBody UpdateUserDTO body) {
         return service.updateProfile(userId, body);
     }
 
     @DeleteMapping("/me")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deactivate(@RequestHeader("X-User-Id") Long userId) {
+    public void deactivate(@RequestHeader("X-User-Id") UUID userId) {
         service.deactivate(userId);
     }
 }

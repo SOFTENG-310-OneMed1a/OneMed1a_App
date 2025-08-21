@@ -2,6 +2,7 @@ package com.onemed1a.backend.user;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 import com.onemed1a.backend.user.User.Gender;
 
@@ -11,7 +12,7 @@ import lombok.Value;
 @Value
 @Builder
 public class UserDTO {
-    Long id;
+    UUID id;
     String firstName;
     String lastName;
     String email;
