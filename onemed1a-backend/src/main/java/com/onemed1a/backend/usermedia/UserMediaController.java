@@ -1,4 +1,4 @@
-package com.onemed1a.backend.user;
+package com.onemed1a.backend.usermedia;
 
 
 import java.util.List;
@@ -11,34 +11,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.onemed1a.backend.media.Media;
-import com.onemed1a.backend.media.MediaRepository;
-import com.onemed1a.backend.user.UserMedia;
-import com.onemed1a.backend.user.UserMediaService;
-import org.springframework.lang.Nullable;
+import com.onemed1a.backend.media.MediaData;
+import com.onemed1a.backend.media.MediaDataRepository;
 
 @RestController
 @RequestMapping("/usermedia")
 public class UserMediaController {
 
     private final UserMediaService userMediaService;
-    private final Optional<MediaRepository> mediaRepository;
+    private final Optional<MediaDataRepository> mediaDataRepository;
 
-    public UserMediaController(UserMediaService userMediaService, Optional<MediaRepository> mediaRepository) {
+    public UserMediaController(UserMediaService userMediaService, Optional<MediaDataRepository> mediaDataRepository) {
         this.userMediaService = userMediaService;
-        this.mediaRepository = mediaRepository == null ? Optional.empty() : mediaRepository;
+        this.mediaDataRepository = mediaDataRepository == null ? Optional.empty() : mediaDataRepository;
     }
 
     //Endpoint to return all media statuses for the logged-in user, with optional query parameters: status (media status), type (media type), page (for pagination), size (for pagination), sort (sort based on a field and ascending or descending).
     @GetMapping
     public List<UserMedia> getUserMedia(
             @RequestParam(required = false) UserMedia.Status status,   // WATCHING, COMPLETED, PLAN_TO_WATCH
-            @RequestParam(required = false) Media.MediaType type,      // MOVIE, TV, MUSIC, BOOKS
+            @RequestParam(required = false) MediaData.MediaType type,      // MOVIE, TV, MUSIC, BOOKS
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "updatedAt,desc") String sort
     ) {
-        return userMediaService.getUserMedia(status, type, page, size, sort);
+        UUID demoUserId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        return userMediaService.getUserMedia(demoUserId, status, type, page, size, sort);
     }
 
     //Endpoint to return the status of a specific media item for the logged-in user.
@@ -57,7 +55,7 @@ public class UserMediaController {
         }
         UUID mediaId = body.getMediaId();
         // If the media backend is present, verify the media exists. Otherwise, skip validation.
-        mediaRepository.ifPresent(repo -> {
+        mediaDataRepository.ifPresent(repo -> {
             if (!repo.existsById(mediaId)) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media " + mediaId + " not found");
             }
@@ -76,7 +74,7 @@ public class UserMediaController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body is required");
         }
         // Optional media existence check if repo is present
-        mediaRepository.ifPresent(repo -> {
+        mediaDataRepository.ifPresent(repo -> {
             if (!repo.existsById(mediaId)) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media " + mediaId + " not found");
             }
@@ -91,7 +89,7 @@ public class UserMediaController {
     @DeleteMapping("/{mediaId}")
     public ResponseEntity<Void> deleteUserMediaStatus(@PathVariable UUID mediaId) {
         // Optional media existence check if repo is present (not strictly required for delete)
-        mediaRepository.ifPresent(repo -> {
+        mediaDataRepository.ifPresent(repo -> {
             if (!repo.existsById(mediaId)) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media " + mediaId + " not found");
             }

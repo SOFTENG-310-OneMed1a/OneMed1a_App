@@ -1,4 +1,4 @@
-package com.onemed1a.backend.user;
+package com.onemed1a.backend.usermedia;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.onemed1a.backend.user.UserMedia;
-import com.onemed1a.backend.user.UserMediaController;
+import com.onemed1a.backend.media.MediaData;
 
 /**
  * Service layer for UserMedia. Implements the logic expected by the controller:
@@ -33,7 +32,7 @@ public class UserMediaService {
     public List<UserMedia> getUserMedia(
             UUID userId,
             UserMedia.Status status,
-            com.onemed1a.backend.media.Media.MediaType type,
+            MediaData.MediaType type,
             int page,
             int size,
             String sort
