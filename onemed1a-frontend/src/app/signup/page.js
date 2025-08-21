@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import { useState } from "react";
 import axios from "axios";
+import { useRouter} from "next/navigation";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -56,6 +58,8 @@ export default function SignupPage() {
         password: "",
         confirmPassword: "",
       });
+
+      router.push("/movies")
     } catch (err) {
       if (err.response && err.response.status === 409) {
         setError("Email already in use");
@@ -213,7 +217,7 @@ export default function SignupPage() {
           <div className="text-center">
             <span className="text-sm text-gray-600">
               Already have an account?{' '}
-              <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+              <Link href="/" className="font-medium text-indigo-600 hover:text-indigo-500">
                 Sign in
               </Link>
             </span>
