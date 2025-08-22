@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import PropTypes from "prop-types";
 export default function SearchBar({ items }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -56,3 +56,14 @@ export default function SearchBar({ items }) {
     </div>
   );
 }
+
+SearchBar.propTypes = {
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      title: PropTypes.string.isRequired,
+      year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      category: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+};
