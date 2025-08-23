@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
 import StarRating from "@/app/media-details-components/StarRating";
-import MediaActionButtons from "@/app/media-details-components/MediaActionButtons";
+import CollectionDropdown from "@/app/media-details-components/CollectionDropdown";
 import Divider from "@/app/media-details-components/Divider";
 
 /** -------------------------------------------------------
@@ -157,8 +157,17 @@ export default async function MusicPage({ params }) {
 
                 <Divider />
 
-                <MediaActionButtons primaryLabel="Listen Now" secondaryLabel="Bookmark" />
-            </div>
+                  <div className="mt-4">
+                              <CollectionDropdown
+                                currentStatus="Not Added"
+                                verb="Listen"
+                                verb2="Listening"
+                                // userId={user.id}
+                                // mediaId={movie.mediaId}
+                                // mediaType={movie.type}
+                              />
+                            </div>
+                          </div>
         </main>
     );
 }
