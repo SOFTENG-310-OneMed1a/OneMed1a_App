@@ -1,3 +1,4 @@
+import React from "react";
 import MediaNav from "@/components/MediaNavigation";
 import MediaGrid from "@/components/MediaGrid";
 import { getUserMediaByUserId } from "@/api/mediaAPI";
@@ -44,6 +45,10 @@ export default async function MediaPage({ params }) {
         type: ums.media?.type.toLowerCase(),
       }));
 
+  const allItems = Object.entries(mediaData).flatMap(([category, arr]) =>
+    arr.map(item => ({ ...item, category }))
+  );
+
   return (
       <div className="p-4">
         <MediaNav />
@@ -52,3 +57,5 @@ export default async function MediaPage({ params }) {
       </div>
   );
 }
+
+    
