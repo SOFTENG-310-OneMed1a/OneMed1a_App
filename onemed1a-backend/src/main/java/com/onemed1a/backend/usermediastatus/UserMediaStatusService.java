@@ -1,7 +1,6 @@
 package com.onemed1a.backend.usermediastatus;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import com.onemed1a.backend.media.MediaData;

@@ -1,6 +1,5 @@
 package com.onemed1a.backend.search.service;
 
-import com.onemed1a.backend.media.MediaData;
 import com.onemed1a.backend.media.MediaDataRepository;
 import com.onemed1a.backend.search.dto.SearchRequest;
 import com.onemed1a.backend.search.dto.SearchResultItem;
@@ -26,7 +25,7 @@ public class SearchService {
     }
 
     public List<SuggestResultItem> suggest(String q, int limit) {
-        int cap = Math.max(1, Math.min(limit, 10));
+        int cap = Math.clamp(limit, 1, 10);
         Pageable firstN = PageRequest.of(0, cap, Sort.by(Sort.Direction.ASC, "title"));
         return mediaRepo.findAll(MediaSearchSpecification.suggestByPrefix(q), firstN)
                 .map(SearchMappers::toSuggestItem)

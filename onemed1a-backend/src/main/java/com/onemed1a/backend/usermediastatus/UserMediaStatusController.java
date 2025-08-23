@@ -3,18 +3,13 @@ package com.onemed1a.backend.usermediastatus;
 
 import java.util.List;
 import java.util.UUID;
-import java.net.URI;
-import java.util.Optional;
 
 import com.onemed1a.backend.usermediastatus.dto.UserMediaStatusDTO;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.onemed1a.backend.media.MediaData;
-import com.onemed1a.backend.media.MediaDataRepository;
 
 @RestController
 @RequestMapping("/api/v1/usermedia")

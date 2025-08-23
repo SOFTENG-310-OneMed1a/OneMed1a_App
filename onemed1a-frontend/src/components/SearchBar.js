@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import PropTypes from "prop-types";
+import {suggest} from "@/api/searchAPI";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
 
@@ -22,19 +23,15 @@ export default function SearchBar({ items }) {
     abortRef.current = ac;
     setLoading(true);
     try {
-      const url = `${API_BASE}/media/search?q=${encodeURIComponent(value)}&size=5&sort=title,asc`;
-      const res = await fetch(url, { signal: ac.signal });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      // If backend returns a Spring Page, pull from 'content'; otherwise treat as array.
-      const content = Array.isArray(data) ? data : data?.content ?? [];
-      const mapped = content.map((m) => ({
-        id: m.id ?? m.mediaId ?? m.id,
-        title: m.title,
-        year: m.releaseDate?.toString().slice(0, 4),
-        category: mapTypeToCategory(m.type),
-      }));
-      setResults(mapped);
+      const searchResults = await suggest(query);
+
+      setResults(searchResults.map(item => ({
+          id: item.id,
+          title: item.title,
+          year: item.year,
+          category: mapTypeToCategory(item.type),
+      })));
+
     } catch (e) {
       if (e.name !== "AbortError") {
         console.error("Suggest failed:", e);
@@ -48,6 +45,8 @@ export default function SearchBar({ items }) {
   const handleChange = (e) => {
     const value = e.target.value;
     setQuery(value);
+
+
 
     if (timerRef.current) clearTimeout(timerRef.current);
 
@@ -72,12 +71,9 @@ export default function SearchBar({ items }) {
   };
 
   const handleSelect = (item) => {
-    // TODO: when media detail pages exist, use `/media/${item.id}`
-    if (item?.category) {
-      router.push(`/${item.category}`);
-    } else {
-      router.push(`/search?query=${encodeURIComponent(item.title)}`);
-    }
+      router.push(`/collection/${item.category}/${item.id}`);
+      setResults([]);
+      setQuery("");
   };
 
   return (

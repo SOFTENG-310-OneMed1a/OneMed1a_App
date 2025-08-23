@@ -12,9 +12,15 @@ const typeMap = {
   books: "BOOKS",
 };
 
-const pickCover = (posterPath, backdropPath, size = "w342") =>
-    posterPath ? `${TMDB_IMG_BASE}${size}${posterPath}` :
-        (backdropPath ? `${TMDB_IMG_BASE}${size}${backdropPath}` : "/next.svg");
+function pickCover  (posterPath, backdropPath, size = "w342") {
+    if (posterPath) {
+        return '${TMDB_IMG_BASE}${size}${posterPath}'
+    } else if (backdropPath) {
+        return '${TMDB_IMG_BASE}${backdropPath}'
+    } else {
+        return "/next.svg";
+    }
+}
 
 const toYear = (dateStr) => (dateStr ? Number(String(dateStr).slice(0, 4)) : undefined);
 
@@ -23,6 +29,7 @@ export default async function MediaPage({ params }) {
 
   const cookieStore = await cookies();
   const userId = cookieStore.get("userId")?.value;
+  console.log(userId);
   if (!userId) redirect("/");
 
   let raw = [];
@@ -31,7 +38,7 @@ export default async function MediaPage({ params }) {
   } catch (e) {
     console.error("Failed to load user media:", e);
   }
-
+console.log(raw);
   // Normalize to [{ id, title, coverUrl, year }]
   const items = raw
       .filter((ums) => ums?.media?.type === typeMap[mediaType])
@@ -46,7 +53,6 @@ export default async function MediaPage({ params }) {
   
   return (
       <div className="p-4">
-        <MediaNav />
         <h1 className="text-2xl font-bold my-4">{String(mediaType).toUpperCase()}</h1>
         <MediaGrid items={items} />
       </div>

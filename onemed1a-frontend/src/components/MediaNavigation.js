@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState, useEffect } from "react";
+import SearchBar from "@/components/SearchBar";
 
 export default function MediaNavigation() {
   const pathname = usePathname();
@@ -10,7 +11,7 @@ export default function MediaNavigation() {
   const searchParams = useSearchParams();
 
   const tabs = [
-    { name: "Movies", href: "/movies" },
+    { name: "Movies", href: "/movie" },
     { name: "TV", href: "/tv" },
     { name: "Books", href: "/books" },
     { name: "Audio", href: "/audio" },
@@ -24,17 +25,6 @@ export default function MediaNavigation() {
     // keep input in sync if URL changes externally
     setQ(searchParams?.get("q") ?? "");
   }, [searchParams]);
-
-  const onSubmit = useCallback(
-    (e) => {
-      e.preventDefault();
-      const params = new URLSearchParams(searchParams?.toString() || "");
-      if (q?.trim()) params.set("q", q.trim());
-      else params.delete("q");
-      router.push(`${pathname}?${params.toString()}`);
-    },
-    [q, pathname, router, searchParams]
-  );
 
   return (
     <div className="w-full flex flex-col items-center gap-3">
@@ -56,22 +46,7 @@ export default function MediaNavigation() {
       </nav>
 
       {/* Search bar */}
-      <form onSubmit={onSubmit} className="w-full max-w-xl flex items-center gap-2">
-        <input
-          type="search"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search titles…"
-          className="flex-1 rounded-full border border-neutral-300 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
-          aria-label="Search titles"
-        />
-        <button
-          type="submit"
-          className="px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
-        >
-          Search
-        </button>
-      </form>
+        <SearchBar />
     </div>
   );
 }
