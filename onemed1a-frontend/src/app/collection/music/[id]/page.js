@@ -1,10 +1,9 @@
 // app/music/[id]/page.js
 import { notFound } from "next/navigation";
-import { cookies } from "next/headers";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
 import StarRating from "@/app/media-details-components/StarRating";
-import CollectionDropdown from "@/app/media-details-components/CollectionDropdown";
+import MediaActionButtons from "@/app/media-details-components/MediaActionButtons";
 import Divider from "@/app/media-details-components/Divider";
 
 /** -------------------------------------------------------
@@ -56,19 +55,6 @@ async function getMusic(id) {
 export default async function MusicPage({ params }) {
     const album = await getMusic(params.id);
     if (!album) notFound();
-
- // Get userId from cookies 
-  const cookieStore = cookies();
-  const userId = cookieStore.get("userId")?.value || "9fa78e4f-c4d7-4f5e-88b0-cf96dfcce170";
-
-  // Get current status for dropdown (placeholder)
-  const currentStatus = await getUserMediaStatus(userId, album.mediaId);
-
-  // Placeholder function for user media status
-async function getUserMediaStatus(userId, mediaId) {
-  // some kind of API call to get user's media status
-  return "Not Added";
-}
 
     return (
         <main className="min-h-screen bg-gray-100 text-gray-900">
@@ -171,21 +157,17 @@ async function getUserMediaStatus(userId, mediaId) {
 
                 <Divider />
 
-                  <div className="mt-4">
-                              <CollectionDropdown
-                                currentStatus="Not Added"
-                                verb="Listen"
-                                verb2="Listening"
-                                userId={userId}
-                                mediaId={album.mediaId}
-                                mediaType={album.type}
-                                            // onChange={(newStatus) => {
-            //   console.log("User changed status to:", newStatus);
-            //   // TODO: call backend API to save new status
-            // }}
-                              />
-                            </div>
-                          </div>
+                <div className="mt-4">
+                          <CollectionDropdown
+                            userId={userId}
+                            mediaId={album.mediaId}
+                            mediaType={album.type}
+                            currentStatus={currentStatus}
+                            verb="Listen"
+                            verb2="Listening"
+                          />
+                        </div>
+                      </div>
         </main>
     );
 }
