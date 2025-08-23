@@ -109,7 +109,7 @@ function Card({ item }) {
     "active:scale-[0.99] motion-safe:transition-transform";
 
   const content = (
-    <>
+    <Link href={`/collection/${item.type}/${item.id}`}>
       <div className="relative w-full">
         <div className="aspect-[2/3] w-full overflow-hidden rounded-t-xl">
           {!loaded && (
@@ -122,7 +122,7 @@ function Card({ item }) {
             height={600}
             className={`h-full w-full object-cover ${loaded ? "block" : "hidden"}`}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
-            onLoadingComplete={() => setLoaded(true)}
+            onLoad={() => setLoaded(true)}
             onError={() => setSrc("/placeholder.png")}
             priority={false}
           />
@@ -157,7 +157,7 @@ function Card({ item }) {
           {item.title} {item.year ? `(${item.year})` : ""}
         </span>
       </div>
-    </>
+    </Link>
   );
 
   return isHrefValid ? (

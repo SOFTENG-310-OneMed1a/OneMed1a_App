@@ -1,4 +1,4 @@
-// app/movies/[id]/page.js
+// app/tvshows/[id]/page.js
 import { notFound } from "next/navigation";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
@@ -7,30 +7,30 @@ import MediaActionButtons from "@/app/media-details-components/MediaActionButton
 import Divider from "@/app/media-details-components/Divider";
 import { getMediaById } from "@/api/mediaClient";
 
-async function getMovie(id) {
-    try {
-        const movie = await getMediaById(id);
-        return movie; 
+async function getTvShow(id) {
+        try {
+        const show = await getMediaById(id);
+        return show; 
     } catch (error) {
-        console.error("Error fetching movie:", error);
+        console.error("Error fetching TV Show:", error);
         return null;
     }
 }
 
-export default async function MoviePage({ params }) {
-    const {id} = await params;
-    const movie = await getMovie(id);
-    if (!movie) notFound();
+export default async function TvShowPage({ params}) {
+    const { id } = await params;
+    const show = await getTvShow(id);
+    if (!show) notFound();
 
     return (
         <main className="min-h-screen bg-gray-100 text-gray-900">
-            <BackgroundImage src={`https://image.tmdb.org/t/p/w780${movie.backdropUrl}`} alt={`${movie.title} backdrop`} />
+            <BackgroundImage src={`https://image.tmdb.org/t/p/w780${show.backdropUrl}`} alt={`${show.title} backdrop`} />
 
             <div className="mx-auto w-full max-w-6xl px-4 pb-20">
                 {/* Back button */}
                 <div className="pt-8 mb-8">
                     <a
-                        href="/movies"
+                        href="/tvshows"
                         className="inline-flex items-center gap-2 text-gray-800 hover:text-gray-600"
                     >
                         <span className="text-2xl">←</span>
@@ -42,8 +42,8 @@ export default async function MoviePage({ params }) {
                     {/* Poster */}
                     <div className="flex-shrink-0 lg:w-80">
                         <PosterImage
-                            src={`https://image.tmdb.org/t/p/w780${movie.posterUrl}`}
-                            alt={`${movie.title} poster`}
+                            src={`https://image.tmdb.org/t/p/w780${show.posterUrl}`}
+                            alt={`${show.title} poster`}
                             className="w-full lg:w-80 rounded-lg"
                         />
                     </div>
@@ -52,35 +52,37 @@ export default async function MoviePage({ params }) {
                     <div className="flex-1">
                         {/* Title and basic info */}
                         <div className="mb-6">
-                            <h1 className="text-4xl font-bold mb-2 text-gray-900">{movie.title}</h1>
+                            <h1 className="text-4xl font-bold mb-2 text-gray-900">{show.title}</h1>
                             <div className="text-gray-600 mb-3">
-                                {movie.director && <div className="text-lg">{movie.director}</div>}
-                                <div className="flex items-center gap-4 text-sm">
-                                    {movie.runtime && <span>{movie.runtime}</span>}
-                                    {movie.releaseDate && <span>• {movie.releaseDate}</span>}
-                                    {movie.studio && <span>• Produced By: {movie.studio}</span>}
+                                <div className="flex flex-wrap items-center gap-4 text-sm">
+                                    {show.firstAirYear && <span>{show.firstAirYear}</span>}
+                                    {show.seasons != null && (
+                                        <span>• {show.seasons} season{show.seasons === 1 ? "" : "s"}</span>
+                                    )}
+                                    {show.episodes != null && <span>• {show.episodes} episodes</span>}
+                                    {show.network && <span>• Network: {show.network}</span>}
                                 </div>
                             </div>
 
                             {/* Cast */}
-                            {movie.cast && (
+                            {show.cast?.length ? (
                                 <div className="mb-4">
                                     <div className="text-gray-500 text-sm mb-1">Cast:</div>
                                     <div className="text-sm text-gray-600">
-                                        {movie.cast.join(", ")}
+                                        {show.cast.join(", ")}
                                     </div>
                                 </div>
-                            )}
+                            ) : null}
 
                             {/* Genre pills */}
                             <div className="flex flex-wrap gap-2 mb-6">
-                                {(movie.genres || []).map((genre) => (
+                                {(show.genres || []).map((genre) => (
                                     <span
                                         key={genre}
                                         className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium"
                                     >
-                                        {genre}
-                                    </span>
+                    {genre}
+                  </span>
                                 ))}
                             </div>
                         </div>
@@ -88,7 +90,7 @@ export default async function MoviePage({ params }) {
                         {/* Description - hidden on mobile, shown on desktop */}
                         <div className="hidden lg:block">
                             <p className="text-gray-700 leading-relaxed">
-                                {movie.description || "No synopsis available."}
+                                {show.description || "No synopsis available."}
                             </p>
                         </div>
                     </div>
@@ -97,20 +99,17 @@ export default async function MoviePage({ params }) {
                 {/* Description - shown on mobile only, under everything */}
                 <div className="lg:hidden mt-8">
                     <p className="text-gray-700 leading-relaxed">
-                        {movie.description || "No synopsis available."}
+                        {show.description || "No synopsis available."}
                     </p>
                 </div>
 
-                <Divider/>
+                <Divider />
 
-                <StarRating
-                    value={5}
-                />
+                <StarRating value={4} />
 
-                <Divider/>
+                <Divider />
 
-                <MediaActionButtons/>
-
+                <MediaActionButtons />
             </div>
         </main>
     );

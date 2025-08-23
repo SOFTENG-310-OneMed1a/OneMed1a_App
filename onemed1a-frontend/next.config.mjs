@@ -4,6 +4,7 @@ const nextConfig = {
       domains: [
         "books.google.com", // allow Google Books covers
         "image.tmdb.org",    // for TMDB images
+          "i.scdn.co" // For spotify music
       ],
     },
   };
