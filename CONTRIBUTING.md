@@ -39,7 +39,40 @@ If you find a bug:
     - In GitHub, send a pull request to `OneMed1a:main`.
 
 ## Environment set up and running tests
-**TO BE COMPLETED**
+   ### Backend setup
+   - Install Java version 21
+   - Install Maven
+   - Install Docker (container for postgres)
+
+   ### Frontend setup
+   - Install Node.js version 18 +
+
+   Once you have installed all the required software, first run the database through docker
+
+   ```shell
+      cd onemed1a-backend
+      docker compose up -d
+   ```
+
+   After you have the database running on docker, run the sprintboot backend
+
+   ```shell
+      mvn spring-boot:run
+   ```
+
+   Once you have all the backend running switch to the frontend server and run the frontend
+   
+   ```shell
+      cd onemed1a-frontend
+      npm run dev
+   ```
+
+   To run backend tests switch to the backend folder, then run the following command
+
+   ```shell
+      cd onemed1a-backend
+      mvn test
+   ```
   
 ## Contributions we welcome
 ### We are looking for:
@@ -64,7 +97,6 @@ and start working on any issues labeled with "good first issue".
 
 ### Backend:
   - Java SpringBoot
-  - Supabase
   - postgreSQL
 
 ## Project vision & roadmap
@@ -105,12 +137,14 @@ place, transforming fragmented media browsing into a cohesive, socially driven e
 ### Backend
   - Java SpringBoot
 ### Database
-  - postgreSQL
+  - Postgres (containerized through Docker)
 ### User authentication
-  - Supabase
+  - Up to whoever is implementing's choice
 ### APIs
   - OpenAI
-  - ??? more when we find out
+  - TMDB
+  - Spotify web API
+  - Google Books API
 
 ## Project ground rules
 To ensure consistency throughout the source code, keep the following rules while you are working:
