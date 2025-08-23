@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { uppsertMediaStatus } from "@/api/mediaStatusApi";
+import { cookies } from "next/headers";
 
 export default function CollectionDropdown({
-  userId,
-  mediaId,
   mediaType,
   verb = "Watch",
   verb2 = "Watching",
@@ -18,23 +18,56 @@ export default function CollectionDropdown({
 
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState(currentStatus);
+  const [userId, setUserId] = useState(null);
+  const [id, setId] = useState(null);
 
-  async function handleSelect(option) {
+  // ✅ Load userId and id on mount
+  useEffect(() => {
+    async function fetchUserAndId() {
+      try {
+        // Example API call to get user + id
+        const cookieStore = await cookies();
+        const userId = cookieStore.get("userId")?.value;
+        console.log(userId);
+        const { id } = await params;
+        setUserId(userId);
+        setId(id); 
+      } catch (err) {
+        console.error("Failed to fetch session info:", err);
+      }
+    }
+
+    fetchUserAndId();
+  }, []);
+
+  // ✅ Sync status to backend whenever it changes
+  useEffect(() => {
+    if (!userId || !id) return;
+    if (status === "Not Added") {
+      console.log("Delete not implemented for backend yet");
+      return;
+    }
+
+    async function updateStatus() {
+      try {
+        await uppsertMediaStatus({
+          userId,
+          id,
+          mediaType,
+          status,
+        });
+        onChange(status);
+      } catch (err) {
+        console.error("Failed to update status:", err);
+      }
+    }
+
+    updateStatus();
+  }, [status, userId, id, mediaType, onChange]);
+
+  function handleSelect(option) {
     setStatus(option);
     setOpen(false);
-
-    // Placeholder API request simulation
-    console.log("Simulated API call:", {
-      userId,
-      mediaId,
-      mediaType,
-      status: option,
-    });
-
-    // Simulate a delay for "network request"
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    onChange(option);
   }
 
   const baseBtn =
@@ -75,11 +108,11 @@ export default function CollectionDropdown({
 }
 
 CollectionDropdown.propTypes = {
-  userId: PropTypes.string,
-  mediaId: PropTypes.string,
-  mediaType: PropTypes.string,
+  mediaType: PropTypes.string.isRequired,
   currentStatus: PropTypes.string,
   verb: PropTypes.string,
   verb2: PropTypes.string,
   onChange: PropTypes.func,
+  disabled: PropTypes.bool,
+  className: PropTypes.string,
 };
