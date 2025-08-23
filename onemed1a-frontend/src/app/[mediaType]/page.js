@@ -1,5 +1,3 @@
-import React from "react";
-import MediaNav from "@/components/MediaNavigation";
 import MediaGrid from "@/components/MediaGrid";
 import { getUserMediaByUserId } from "@/api/mediaAPI";
 import { cookies } from "next/headers";
@@ -45,9 +43,14 @@ export default async function MediaPage({ params }) {
         type: ums.media?.type.toLowerCase(),
       }));
 
-  const allItems = Object.entries(mediaData).flatMap(([category, arr]) =>
-    arr.map(item => ({ ...item, category }))
-  );
+  const items = mediaData[mediaType] || [];
+  const filtered = q
+    ? items.filter((it) => {
+        const title = (it.title || "").toLowerCase();
+        const year = String(it.year || "");
+        return title.includes(q) || year.includes(q);
+      })
+    : items;
 
   return (
       <div className="p-4">
@@ -58,4 +61,4 @@ export default async function MediaPage({ params }) {
   );
 }
 
-    
+

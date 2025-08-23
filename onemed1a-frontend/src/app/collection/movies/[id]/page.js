@@ -5,53 +5,26 @@ import PosterImage from "@/app/media-details-components/PosterImage";
 import StarRating from "@/app/media-details-components/StarRating";
 import MediaActionButtons from "@/app/media-details-components/MediaActionButtons";
 import Divider from "@/app/media-details-components/Divider";
-
-/** -------------------------------------------------------
- * Toggle placeholder rendering:
- *  - true  = always show the placeholder movie below
- *  - false = fetch real data from backend (requires API env)
- * ------------------------------------------------------ */
-const USE_PLACEHOLDER = true;
-
-// const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL; // e.g. https://api.yourdomain.com
+import { getMediaById } from "@/api/mediaClient";
 
 async function getMovie(id) {
-    if (USE_PLACEHOLDER) {
-        // Placeholder data matching the screenshot
-        return {
-            mediaId: "placeholder-id",
-            externalMediaId: "129",
-            type: "MOVIE",
-            title: "Spirited Away",
-            director: "Hayao Miyazaki",
-            releaseDate: "2001",
-            runtime: "125 min",
-            studio: "Studio Ghibli",
-            genres: ["Animation", "Family"],
-            description:
-                "Spirited Away is a Japanese animated film by Hayao Miyazaki that follows a young girl, Chihiro, who becomes trapped in a magical world. As her parents are transformed into pigs, she must work in a mysterious bathhouse for spirits to find a way to free them and return to the human world. The film explores themes of courage, identity, and transformation.",
-            posterUrl: "/poster.JPG",
-            backdropUrl: "/backdrop.JPG",
-            createdAt: new Date().toISOString(),
-            runtimeMinutes: 125,
-            rating: 4.7,
-            cast: ["Rumi Hiiragi (Sen)", "Miyu Irino", "Mari Natsuki (Yubaba)", "Takashi Naito (Akio)"]
-        };
+    try {
+        const movie = await getMediaById(id);
+        return movie; 
+    } catch (error) {
+        console.error("Error fetching movie:", error);
+        return null;
     }
-
-    const res = await fetch(`${API_BASE}/media/${id}`, { cache: "no-store" });
-    if (res.status === 404) return null;
-    if (!res.ok) throw new Error("Failed to fetch movie");
-    return res.json();
 }
 
 export default async function MoviePage({ params }) {
-    const movie = await getMovie(params.id);
+    const {id} = await params;
+    const movie = await getMovie(id);
     if (!movie) notFound();
 
     return (
         <main className="min-h-screen bg-gray-100 text-gray-900">
-            <BackgroundImage src={movie.backdropUrl} alt={`${movie.title} backdrop`} />
+            <BackgroundImage src={`https://image.tmdb.org/t/p/w780${movie.backdropUrl}`} alt={`${movie.title} backdrop`} />
 
             <div className="mx-auto w-full max-w-6xl px-4 pb-20">
                 {/* Back button */}
@@ -69,7 +42,7 @@ export default async function MoviePage({ params }) {
                     {/* Poster */}
                     <div className="flex-shrink-0 lg:w-80">
                         <PosterImage
-                            src={movie.posterUrl}
+                            src={`https://image.tmdb.org/t/p/w780${movie.posterUrl}`}
                             alt={`${movie.title} poster`}
                             className="w-full lg:w-80 rounded-lg"
                         />
