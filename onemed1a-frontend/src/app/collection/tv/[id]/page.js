@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
 import StarRating from "@/app/media-details-components/StarRating";
-import MediaActionButtons from "@/app/media-details-components/MediaActionButtons";
+import CollectionDropdown from "@/app/media-details-components/CollectionDropdown";
 import Divider from "@/app/media-details-components/Divider";
 import { getMediaById } from "@/api/mediaClient";
 
@@ -109,8 +109,17 @@ export default async function TvShowPage({ params}) {
 
                 <Divider />
 
-                <MediaActionButtons />
-            </div>
+                  <div className="mt-4">
+                              <CollectionDropdown
+                                currentStatus="Not Added"
+                                verb="Watch"
+                                verb2="Watching"
+                                // userId={user.id}
+                                // mediaId={movie.mediaId}
+                                // mediaType={movie.type}
+                              />
+                            </div>
+                          </div>
         </main>
     );
 }
