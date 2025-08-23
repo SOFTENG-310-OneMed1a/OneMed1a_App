@@ -17,7 +17,7 @@ import com.onemed1a.backend.media.MediaData;
 import com.onemed1a.backend.media.MediaDataRepository;
 
 @RestController
-@RequestMapping("/usermedia")
+@RequestMapping("/api/v1/usermedia")
 public class UserMediaStatusController {
 
     private final UserMediaStatusService userMediaService;
@@ -48,8 +48,8 @@ public class UserMediaStatusController {
     //Delete method to delete the status of a media item for the logged in user
     @DeleteMapping("/{statusId}/")
     public ResponseEntity<UUID> deleteUserMediaStatus(@PathVariable ("statusId") UUID statusId) {
-         userMediaService.delete(statusId);
-         return ResponseEntity.ok(statusId);
+        userMediaService.delete(statusId);
+        return ResponseEntity.ok(statusId);
 
     }
 
