@@ -7,15 +7,13 @@ export default function CollectionDropdown({
   userId,
   mediaId,
   mediaType,
-  verb = "placeholder",
-  verb2 = "placeholder2",
+  verb = "Watch",
+  verb2 = "Watching",
   currentStatus = "Not Added",
   onChange = (newStatus) => console.log("Changed to:", newStatus),
   disabled = false,
   className = "",
 }) {
-  // Define verbs based on media type
-
   const OPTIONS = ["Completed", `Planning to ${verb}`, `${verb2}`, "Not Added"];
 
   const [open, setOpen] = useState(false);
@@ -25,25 +23,18 @@ export default function CollectionDropdown({
     setStatus(option);
     setOpen(false);
 
-    // Call backend API (replace URL with your endpoint)
-    try {
-      const res = await fetch("/api/user-media-status", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId,
-          mediaId,
-          mediaType,
-          status: option,
-        }),
-      });
+    // Placeholder API request simulation
+    console.log("Simulated API call:", {
+      userId,
+      mediaId,
+      mediaType,
+      status: option,
+    });
 
-      if (!res.ok) throw new Error("Failed to update status");
+    // Simulate a delay for "network request"
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-      onChange(option); // optional callback
-    } catch (err) {
-      console.error(err);
-    }
+    onChange(option);
   }
 
   const baseBtn =
@@ -84,11 +75,11 @@ export default function CollectionDropdown({
 }
 
 CollectionDropdown.propTypes = {
-  userId: PropTypes.string.isRequired,
-  mediaId: PropTypes.string.isRequired,
-  mediaType: PropTypes.string.isRequired,
+  userId: PropTypes.string,
+  mediaId: PropTypes.string,
+  mediaType: PropTypes.string,
   currentStatus: PropTypes.string,
+  verb: PropTypes.string,
+  verb2: PropTypes.string,
   onChange: PropTypes.func,
-  disabled: PropTypes.bool,
-  className: PropTypes.string,
 };
