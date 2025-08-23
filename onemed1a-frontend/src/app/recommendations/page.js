@@ -2,12 +2,18 @@
 
 import { useState } from 'react';
 import SearchBar from '@/components/SearchBar';
+import MediaGrid from '@/components/MediaGrid';
 
 export default function RecommndationPage() {
   const [mediaType, setMediaType] = useState('');
+  const [items, setItems] = useState([]);
 
   const handleSubmit = async (e) => {
     /** empty for now until recommendation api is finished */
+
+    // when i call api i will get list of items ensure i keep the fields used in media grid
+    setItems();
+    // set items and pass into media grid
   }
 
   return (
@@ -54,6 +60,8 @@ export default function RecommndationPage() {
               Find
             </button>
           </div>
+
+          <MediaGrid items = {items}/>
 
         </form>
       </div>
