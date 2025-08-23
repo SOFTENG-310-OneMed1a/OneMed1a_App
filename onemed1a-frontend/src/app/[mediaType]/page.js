@@ -1,5 +1,3 @@
-import React from "react";
-import MediaNav from "@/components/MediaNavigation";
 import MediaGrid from "@/components/MediaGrid";
 import { getUserMediaByUserId } from "@/api/mediaAPI";
 import { cookies } from "next/headers";
@@ -54,5 +52,3 @@ export default async function MediaPage({ params }) {
       </div>
   );
 }
-
-    
