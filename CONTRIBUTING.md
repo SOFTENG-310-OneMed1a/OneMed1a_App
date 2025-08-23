@@ -46,17 +46,18 @@ If you find a bug:
 
    ### Frontend setup
    - Install Node.js version 18 +
+   
 
    Once you have installed all the required software, first run the database through docker
 
    ```shell
-      cd onemed1a-backend
       docker compose up -d
    ```
 
    After you have the database running on docker, run the sprintboot backend
 
    ```shell
+      cd onemed1a-backend
       mvn spring-boot:run
    ```
 
@@ -64,6 +65,7 @@ If you find a bug:
    
    ```shell
       cd onemed1a-frontend
+      npm install
       npm run dev
    ```
 
