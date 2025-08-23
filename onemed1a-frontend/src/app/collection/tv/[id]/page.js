@@ -1,5 +1,6 @@
 // app/tvshows/[id]/page.js
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
 import StarRating from "@/app/media-details-components/StarRating";
@@ -21,6 +22,19 @@ export default async function TvShowPage({ params}) {
     const { id } = await params;
     const show = await getTvShow(id);
     if (!show) notFound();
+
+ // Get userId from cookies 
+  const cookieStore = cookies();
+  const userId = cookieStore.get("userId")?.value || "9fa78e4f-c4d7-4f5e-88b0-cf96dfcce170";
+
+  // Get current status for dropdown (placeholder)
+  const currentStatus = await getUserMediaStatus(userId, show.mediaId);
+
+  // Placeholder function for user media status
+async function getUserMediaStatus(userId, mediaId) {
+  // some kind of API call to get user's media status
+  return "Not Added";
+}
 
     return (
         <main className="min-h-screen bg-gray-100 text-gray-900">
@@ -114,9 +128,13 @@ export default async function TvShowPage({ params}) {
                                 currentStatus="Not Added"
                                 verb="Watch"
                                 verb2="Watching"
-                                // userId={user.id}
-                                // mediaId={movie.mediaId}
-                                // mediaType={movie.type}
+                                userId={userId}
+                                mediaId={show.mediaId}
+                                mediaType={show.type}
+                                     // onChange={(newStatus) => {
+            //   console.log("User changed status to:", newStatus);
+            //   // TODO: call backend API to save new status
+            // }}
                               />
                             </div>
                           </div>
