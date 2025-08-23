@@ -10,4 +10,5 @@ import java.util.UUID;
 
 public interface MediaDataRepository
         extends JpaRepository<MediaData, UUID>, JpaSpecificationExecutor<MediaData> {
+    Optional<MediaData> findByTitleAndType(String title, MediaType mediaTypeEnum);
 }
