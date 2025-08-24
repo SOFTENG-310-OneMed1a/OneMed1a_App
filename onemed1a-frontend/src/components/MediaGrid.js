@@ -80,8 +80,8 @@ export default function MediaGrid({ items, pageSize = DEFAULT_PAGE_SIZE }) {
           const colKey = `col-${ci}-${firstId}-${lastId}-${col.length}`;
           return (
             <div key={colKey} className="flex flex-col gap-4">
-              {col.map((item) => (
-                <Card key={item.id} item={item} />
+              {col.map((item, idx) => (
+                <Card key={`${ci}-${idx}-${item.id}`} item={item} />
               ))}
             </div>
           );

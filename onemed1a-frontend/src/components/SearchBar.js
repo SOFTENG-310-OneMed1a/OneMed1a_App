@@ -71,9 +71,9 @@ export default function SearchBar({ items }) {
   };
 
   const handleSelect = (item) => {
-      router.push(`/collection/${item.category}/${item.id}`);
-      setResults([]);
-      setQuery("");
+    router.push(`/collection/${item.category}/${item.id}`);
+    setResults([]);
+    setQuery("");
   };
 
   return (
