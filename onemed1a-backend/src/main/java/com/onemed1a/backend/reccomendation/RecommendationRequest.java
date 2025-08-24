@@ -5,6 +5,9 @@ public class RecommendationRequest {
     private String mediaType;
     private String mediaName;
 
+    // Default constructor
+    public RecommendationRequest() {}   
+
     // Getters & setters
     public String getMediaType() { return mediaType; }
     public void setMediaType(String mediaType) { this.mediaType = mediaType; }

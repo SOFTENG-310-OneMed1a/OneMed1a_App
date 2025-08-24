@@ -71,21 +71,26 @@ public class OpenAIService {
                         } catch (IllegalArgumentException e) {
                                 continue; // Skip this item if the type is invalid
                         }
-                        MediaData newMedia = MediaData.builder()
-                                .externalMediaId(java.util.UUID.randomUUID().toString()) // Generate a random UUID
-                                .title(title)
-                                .type(mediaTypeEnum)
-                                .genres(List.of(genre))
-                                .description(description)
-                                .releaseDate(releaseYear)
-                                .posterUrl("") // Placeholder, can be updated later
-                                .backdropUrl("") // Placeholder, can be updated later
-                                .createdAt(java.time.Instant.now())
-                                .build();
-                        mediaDataRepository.save(newMedia);
-                        MediaData add = mediaDataRepository.findByTitleAndType(title, mediaTypeEnum)
-                                .orElse(newMedia); // Ensure we get the saved entity
-                        recommendations.add(add);
+                        // Check if the media already exists in the repository
+                        if (mediaDataRepository.findByTitleAndType(title, mediaTypeEnum).isPresent()) {
+                                mediaDataRepository.findByTitleAndType(title, mediaTypeEnum).ifPresent(recommendations::add);
+                        }else{
+                                MediaData newMedia = MediaData.builder()
+                                        .externalMediaId(java.util.UUID.randomUUID().toString()) // Generate a random UUID
+                                        .title(title)
+                                        .type(mediaTypeEnum)
+                                        .genres(List.of(genre))
+                                        .description(description)
+                                        .releaseDate(releaseYear)
+                                        .posterUrl("") // Placeholder, can be updated later
+                                        .backdropUrl("") // Placeholder, can be updated later
+                                        .createdAt(java.time.Instant.now())
+                                        .build();
+                                mediaDataRepository.save(newMedia);
+                                MediaData add = mediaDataRepository.findByTitleAndType(title, mediaTypeEnum)
+                                        .orElse(newMedia); // Ensure we get the saved entity
+                                recommendations.add(add);
+                        }
                 }
         }
         return recommendations;
