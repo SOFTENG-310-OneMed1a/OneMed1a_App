@@ -1,19 +1,54 @@
 'use client';
 
 import { useState } from 'react';
-import SearchBar from '@/components/SearchBar';
 import MediaGrid from '@/components/MediaGrid';
+import { getRecommendation } from '@/api/reccomendationAPI';
+
+
+async function fetchRecommendations(mediaType, mediaName) {
+  try {
+    const recommendations = await getRecommendation(mediaType, mediaName);
+    return recommendations;
+  } catch (error) {
+    console.error("Error fetching recommendations:", error);
+    return [];
+  }
+}
 
 export default function RecommndationPage() {
   const [mediaType, setMediaType] = useState('');
+  const [mediaName, setMediaName] = useState('');
   const [items, setItems] = useState([]);
+  
+  function pickCover  (posterPath, backdropPath, size = "w342") {
+      if (posterPath != "") {
+          return '${TMDB_IMG_BASE}${size}${posterPath}'
+      } else if (backdropPath != "") {
+          return '${TMDB_IMG_BASE}${backdropPath}'
+      } else {
+          return "/next.svg";
+      }
+  }
+
+  const toYear = (dateStr) => (dateStr ? Number(String(dateStr).slice(0, 4)) : undefined);
 
   const handleSubmit = async (e) => {
-    /** empty for now until recommendation api is finished */
-
-    // when i call api i will get list of items ensure i keep the fields used in media grid
-    setItems();
-    // set items and pass into media grid
+    e.preventDefault();
+    if (!mediaType || !mediaName) {
+      alert("Please choose values for both inputs"); // Ensure both fields are filled
+    }
+    const raw = await fetchRecommendations(mediaType.toUpperCase(), mediaName);
+    console.log("Raw recommendations:", raw);
+    const newItems = raw
+    .map((ums) => ({
+      id: ums.mediaId ?? ums.id, // prefer the media's UUID
+      title: ums.title ?? "",
+      coverUrl: pickCover(ums.posterUrl, ums.backdropUrl),
+      year: toYear(ums.releaseDate),
+      type: ums.type.toLowerCase(),
+    }));
+    console.log("Processed items:", newItems);
+    setItems(newItems);
   }
 
   return (
@@ -26,9 +61,19 @@ export default function RecommndationPage() {
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md space-y-4">
-            <div>
-              <SearchBar/> {/* might have to change this to pass in a prop depending on the implementation */}
-            </div>
+              <label htmlFor="mediaName" className="sr-only">
+                Media name
+              </label>
+              <input
+                id="mediaName"
+                name="mediaName"
+                type="text"
+                value={mediaName}
+                onChange={(e) => setMediaName(e.target.value)}
+                required
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Enter media name"
+              />
             <div>
               <label htmlFor="mediaType" className="sr-only">
                 Media type
