@@ -17,12 +17,19 @@ If you find a bug:
 ## Submitting a Pull Request
 1. **Check** existing [pull requests](https://github.com/SOFTENG-310-OneMed1a/OneMed1a_App/pulls) to avoid duplicates.
 2. If not found:
-   - Make your changes in a new git branch:
-
+    - First, make a fork of the main repository
+  
+    - After you have made a fork, clone it to your local machine then set upstream to the main repository
+      ```shell
+      git remote add upstream https://github.com/ORIGINAL_OWNER/REPO_NAME.git
+      ```
+    - Make your changes in a new git branch:
       ```shell
       git checkout -b my-fix-branch main
       ```
     - Make sure to test your code and ensure it works and nothing else breaks.
+  
+    - **Before you commit any changes, make sure not to include the API keys in application.properties**
    
     - Commit your changes with a descriptive commit message:
   
@@ -37,6 +44,8 @@ If you find a bug:
       ```
 
     - In GitHub, send a pull request to `OneMed1a:main`.
+  
+    - When creating a pull request, make sure to include a short descriptive title and reference the issue it is addressing in the body.
 
 ## Environment set up and running tests
    ### Backend setup
@@ -46,9 +55,14 @@ If you find a bug:
 
    ### Frontend setup
    - Install Node.js version 18 +
-   
 
-   Once you have installed all the required software, first run the database through docker
+   ### IDE Extensions
+   - Install SonarQube extension
+
+   ### API Keys
+   - Make sure to put all the API keys in onemed1a-backend/src/main/resources/application.properties
+
+   Once you have installed all the required software, first run the database through docker in the root folder
 
    ```shell
       docker compose up -d
@@ -99,7 +113,6 @@ and start working on any issues labeled with "good first issue".
 
 ### Backend:
   - Java SpringBoot
-  - postgreSQL
 
 ## Project vision & roadmap
 `OneMed1a` aims to develop a unified web application that aggregates movies, TV shows, books,
@@ -115,7 +128,6 @@ place, transforming fragmented media browsing into a cohesive, socially driven e
    - TV Shows
    - Music
    - Books / Ebooks
-   - Podcasts
 2. Recommendation features:
    - Cross-media recommendation features using user’s taste from their data.
 3. Tracking of watched/watching media
@@ -153,6 +165,7 @@ To ensure consistency throughout the source code, keep the following rules while
   - All features or bug fixes **Must be tested** by one or more tests.
   - All classes and methods **Must be documented**.
   - Follow the [code of conduct](CODE_OF_CONDUCT.md).
+  - NEVER commit API keys in application.properties.
 
 ## How contributors should get in touch
 Join the discord: https://discord.gg/rsDuRvQuPN
