@@ -14,9 +14,9 @@ const typeMap = {
 
 function pickCover  (posterPath, backdropPath, size = "w342") {
     if (posterPath) {
-        return '${TMDB_IMG_BASE}${size}${posterPath}'
+        return `${TMDB_IMG_BASE}${size}${posterPath}`
     } else if (backdropPath) {
-        return '${TMDB_IMG_BASE}${backdropPath}'
+        return `${TMDB_IMG_BASE}${backdropPath}`
     } else {
         return "/next.svg";
     }
@@ -48,6 +48,7 @@ console.log(raw);
         coverUrl: pickCover(ums.media?.posterUrl, ums.media?.backdropUrl),
         year: toYear(ums.media?.releaseDate),
         type: ums.media?.type.toLowerCase(),
+          status: ums.status,
       }));
 
   

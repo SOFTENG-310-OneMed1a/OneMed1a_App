@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.onemed1a.backend.media.MediaData;
+import com.onemed1a.backend.usermediastatus.UserMediaStatus;
 
 @RestController
 @RequestMapping("/api/v1/usermedia")
@@ -45,7 +46,13 @@ public class UserMediaStatusController {
     public ResponseEntity<UUID> deleteUserMediaStatus(@PathVariable ("statusId") UUID statusId) {
         userMediaService.delete(statusId);
         return ResponseEntity.ok(statusId);
+    }
 
+    @GetMapping("/{userId}/{mediaId}")
+    public ResponseEntity<UserMediaStatus> getStatus(
+            @PathVariable UUID userId,
+            @PathVariable UUID mediaId) {
+        return userMediaService.getStatus(userId, mediaId);
     }
 
 }

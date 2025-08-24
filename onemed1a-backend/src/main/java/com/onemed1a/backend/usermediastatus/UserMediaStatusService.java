@@ -97,6 +97,13 @@ public class UserMediaStatusService {
         return ResponseEntity.ok().body(userMediaStatusRepository.save(ums));
     }
 
+    public ResponseEntity<UserMediaStatus> getStatus(UUID userId, UUID mediaId) {
+        return userMediaStatusRepository
+                .findByUser_IdAndMedia_MediaId(userId, mediaId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 
     /**
      * Delete the status for (userId, mediaId) or by id. Returns true if something was deleted.

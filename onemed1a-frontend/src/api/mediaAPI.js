@@ -7,3 +7,9 @@ export async function getUserMediaByUserId(userId) {
     });
     return response.data;
 }
+
+export async function getStatus(userId, mediaId) {
+    const response = await apiClient.get(`/api/v1/usermedia/${userId}/${mediaId}`);
+    return response.data;
+}
+

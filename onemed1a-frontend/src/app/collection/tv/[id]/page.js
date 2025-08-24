@@ -1,26 +1,39 @@
 // app/tvshows/[id]/page.js
-import { notFound } from "next/navigation";
+import {notFound} from "next/navigation";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
 import StarRating from "@/app/media-details-components/StarRating";
-import MediaActionButtons from "@/app/media-details-components/MediaActionButtons";
 import Divider from "@/app/media-details-components/Divider";
-import { getMediaById } from "@/api/mediaClient";
+import {getMediaById} from "@/api/mediaClient";
+import {cookies} from "next/headers";
+import CollectionDropdown from "@/app/media-details-components/CollectionDropdown";
+import {getStatus} from "@/api/mediaAPI";
 
 async function getTvShow(id) {
         try {
-        const show = await getMediaById(id);
-        return show; 
+            return await getMediaById(id);
     } catch (error) {
         console.error("Error fetching TV Show:", error);
         return null;
     }
 }
 
+async function getMediaStatus(userId, mediaId) {
+    try {
+        return await getStatus(userId, mediaId);
+    } catch (error) {
+    console.log("Not in collection");
+    return null;
+    }
+}
+
 export default async function TvShowPage({ params}) {
     const { id } = await params;
+    const userId = (await cookies()).get('userId')?.value;
+
     const show = await getTvShow(id);
     if (!show) notFound();
+    const result = await getMediaStatus(userId, id);
 
     return (
         <main className="min-h-screen bg-gray-100 text-gray-900">
@@ -114,7 +127,7 @@ export default async function TvShowPage({ params}) {
                             userId={userId}
                             mediaId={show.mediaId}
                             mediaType={show.type}
-                            currentStatus={currentStatus}
+                            currentStatus={result === null ? "UNSPECIFIED" : result.status}
                             verb="Watch"
                             verb2="Watching"
                           />

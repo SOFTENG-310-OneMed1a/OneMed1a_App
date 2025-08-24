@@ -1,26 +1,40 @@
 // app/music/[id]/page.js
-import { notFound } from "next/navigation";
+import {notFound} from "next/navigation";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
 import StarRating from "@/app/media-details-components/StarRating";
-import MediaActionButtons from "@/app/media-details-components/MediaActionButtons";
-import Divider from "@/app/media-details-components/Divider";
-import { getMediaById } from "@/api/mediaClient";
 
-async function getMusic(id) {
+import Divider from "@/app/media-details-components/Divider";
+import {getMediaById} from "@/api/mediaClient";
+import {cookies} from "next/headers";
+import CollectionDropdown from "@/app/media-details-components/CollectionDropdown";
+import {getStatus} from "@/api/mediaAPI";
+
+async function getAlbum(id) {
     try {
-        const song = await getMediaById(id);
-        return song; 
+        return await getMediaById(id);
     } catch (error) {
         console.error("Error fetching song:", error);
         return null;
     }
 }
 
+async function getMediaStatus(userId, mediaId) {
+    try {
+        return await getStatus(userId, mediaId);
+    } catch (error) {
+        console.log("Not in collection");
+        return null;
+    }
+}
+
 export default async function MusicPage({ params }) {
     const { id } = await params;
-    const album = await getMusic(id);
+    const userId = (await cookies()).get('userId')?.value;
+
+    const album = await getAlbum(id);
     if (!album) notFound();
+    const result = await getMediaStatus(userId, id);
 
     return (
         <main className="min-h-screen bg-gray-100 text-gray-900">
@@ -128,7 +142,7 @@ export default async function MusicPage({ params }) {
                             userId={userId}
                             mediaId={album.mediaId}
                             mediaType={album.type}
-                            currentStatus={currentStatus}
+                            currentStatus={result === null ? "UNSPECIFIED" : result.status}
                             verb="Listen"
                             verb2="Listening"
                           />
