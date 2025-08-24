@@ -138,14 +138,12 @@ export default async function MusicPage({ params }) {
                 <Divider />
 
                 <div className="mt-4">
-                          <CollectionDropdown
-                            userId={userId}
-                            mediaId={album.mediaId}
-                            mediaType={album.type}
-                            currentStatus={result === null ? "UNSPECIFIED" : result.status}
-                            verb="Listen"
-                            verb2="Listening"
-                          />
+                    <CollectionDropdown
+                        currentStatus={result === null ? "UNSPECIFIED" : result.status}
+                        userId={userId}
+                        mediaId={album.mediaId}
+                        mediaType={album.type}
+                        />
                         </div>
                       </div>
         </main>

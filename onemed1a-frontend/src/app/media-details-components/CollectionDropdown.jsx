@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
+import {uppsertMediaStatus} from "@/api/mediaStatusApi";
 
 export default function CollectionDropdown({
                                                userId,
                                                mediaId,
                                                mediaType,
                                                currentStatus,                 // enum ("COMPLETED") or display ("Completed") or undefined
-                                               onMarkCompleted,               // async ({ userId, mediaId, mediaType }) => void
                                                onMarkNotCompleted,            // async ({ userId, mediaId, mediaType }) => void
                                                onChange = () => {},
                                                disabled = false,
@@ -48,7 +48,7 @@ export default function CollectionDropdown({
 
         try {
             if (option === labels.COMPLETED) {
-                await onMarkCompleted?.({ userId, mediaId, mediaType });
+                await uppsertMediaStatus({ userId, mediaId, status:"COMPLETED" });
             } else {
                 await onMarkNotCompleted?.({ userId, mediaId, mediaType });
             }

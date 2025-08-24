@@ -121,14 +121,12 @@ export default async function BookPage({ params }) {
                 <Divider />
 
                  <div className="mt-4">
-                             <CollectionDropdown
-                                 currentStatus={result === null ? "UNSPECIFIED" : result.status}
-                               verb="Read"
-                               verb2="Reading"
-                               userId={userId}
-                               mediaId={book.mediaId}
-                               mediaType={book.type}
-                             />
+                     <CollectionDropdown
+                         currentStatus={result === null ? "UNSPECIFIED" : result.status}
+                         userId={userId}
+                         mediaId={book.mediaId}
+                         mediaType={book.type}
+                     />
                            </div>
                          </div>
         </main>

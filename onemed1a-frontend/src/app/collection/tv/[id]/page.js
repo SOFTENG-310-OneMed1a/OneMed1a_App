@@ -123,16 +123,15 @@ export default async function TvShowPage({ params}) {
                 <Divider />
 
                 <div className="mt-4">
-                          <CollectionDropdown
-                            userId={userId}
-                            mediaId={show.mediaId}
-                            mediaType={show.type}
-                            currentStatus={result === null ? "UNSPECIFIED" : result.status}
-                            verb="Watch"
-                            verb2="Watching"
-                          />
+                    <CollectionDropdown
+                        currentStatus={result === null ? "UNSPECIFIED" : result.status}
+                        userId={userId}
+                        mediaId={show.mediaId}
+                        mediaType={show.type}
+                    />
                         </div>
                       </div>
         </main>
     );
 }
+
