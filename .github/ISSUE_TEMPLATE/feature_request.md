@@ -24,6 +24,15 @@ A clear and concise explanation of the current limitation or gap in the product.
 A detailed description of the feature or enhancement you’d like to see. Include any specific behaviour, workflow, or requirements that should be part of the solution.
 
 
+
+### Acceptance Criteria
+Define clear, testable conditions that must be met for this feature to be considered complete. Use the checklist format below:
+
+- [ ] A user can perform `<action>` successfully
+- [ ] The feature works on `<platforms/browsers>`
+- [ ] Error handling is implemented for `<edge cases>`
+- [ ] Documentation is updated accordingly
+
 ### Alternatives Considered
 List any alternative solutions, workarounds, or related features you’ve explored, along with why they are not sufficient.
 
