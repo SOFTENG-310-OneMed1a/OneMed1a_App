@@ -1,0 +1,27 @@
+# Example properties file for reference only. Do not commit real secrets.
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/appdb
+spring.datasource.username=leochu
+spring.datasource.password=password
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.format_sql=true
+
+# TMDB API Configuration
+tmdb.movie.url=${TMDB_MOVIE_URL}
+tmdb.tv.url=${TMDB_TV_URL}
+tmdb.bearer.token=${TMDB_BEARER_TOKEN}
+
+# Spotify API Configuration
+spotify.search.url=${SPOTIFY_SEARCH_URL}
+spotify.token.url=${SPOTIFY_TOKEN_URL}
+spotify.client.id=${SPOTIFY_CLIENT_ID}
+spotify.client.secret=${SPOTIFY_CLIENT_SECRET}
+
+# Google Books API Configuration
+google.books.uri=${GOOGLE_BOOKS_URI}
+google.books.api.key=${GOOGLE_BOOKS_API_KEY}
+
+# OpenAI API Configuration
+open.api.key=${OPEN_API_KEY}
