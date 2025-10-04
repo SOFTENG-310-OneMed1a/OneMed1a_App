@@ -18,14 +18,21 @@ function colsFromWidth(w) {
 
 export default function MediaGrid({ items, pageSize = DEFAULT_PAGE_SIZE }) {
   const data = Array.isArray(items) ? items : [];
-  const [visibleCount, setVisibleCount] = useState(Math.min(pageSize, data.length));
+  const [visibleCount, setVisibleCount] = useState(
+    Math.min(pageSize, data.length)
+  );
   const [cols, setCols] = useState(2);
   const sentinelRef = useRef(null);
 
   // Infinite scroll
   useEffect(() => {
     const el = sentinelRef.current;
-    if (!el || typeof window === "undefined" || !("IntersectionObserver" in window)) return;
+    if (
+      !el ||
+      typeof window === "undefined" ||
+      !("IntersectionObserver" in window)
+    )
+      return;
     const io = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
@@ -93,10 +100,13 @@ export default function MediaGrid({ items, pageSize = DEFAULT_PAGE_SIZE }) {
 
 function Card({ item }) {
   const [loaded, setLoaded] = useState(false);
-  const [src, setSrc] = useState(item.coverUrl || "/next.svg");
+  // Use coverUrl, fallback to posterUrl, fallback to /next.svg
+  const src = item.coverUrl || item.posterUrl || "/next.svg";
 
   const hasHref = typeof item.href === "string" && item.href.trim().length > 0;
-  const targetHref = hasHref ? item.href : `/collection/${item.type}/${item.id}`;
+  // Use id, fallback to externalMediaId
+  const id = item.id || item.externalMediaId;
+  const targetHref = hasHref ? item.href : `/collection/${item.type}/${id}`;
 
   const wrapperClasses =
     "block min-h-[44px] min-w-[44px] overflow-hidden group " +
@@ -113,7 +123,10 @@ function Card({ item }) {
       <div className="relative w-full">
         <div className="aspect-[2/3] w-full overflow-hidden rounded-t-xl">
           {!loaded && (
-            <div className="h-full w-full animate-pulse bg-[color:var(--skeleton,#e5e7eb)]" aria-hidden="true" />
+            <div
+              className="h-full w-full animate-pulse bg-[color:var(--skeleton,#e5e7eb)]"
+              aria-hidden="true"
+            />
           )}
 
           {/* Use a plain <img> to guarantee painting in dev */}
@@ -122,9 +135,11 @@ function Card({ item }) {
             alt=""
             width={400}
             height={600}
-            className={`h-full w-full object-cover ${loaded ? "block" : "hidden"}`}
+            className={`h-full w-full object-cover ${
+              loaded ? "block" : "hidden"
+            }`}
             onLoad={() => setLoaded(true)}
-            onError={() => { setSrc("/next.svg"); setLoaded(true); }}
+            onError={() => setLoaded(true)}
           />
         </div>
 
@@ -139,10 +154,14 @@ function Card({ item }) {
         >
           <div className="from-black/70 via-black/40 to-transparent bg-gradient-to-t px-4 pt-6 pb-3">
             <div className="text-white">
-              <h3 className="text-sm font-semibold leading-snug line-clamp-2">{item.title}</h3>
+              <h3 className="text-sm font-semibold leading-snug line-clamp-2">
+                {item.title}
+              </h3>
               {(item.year || item.type || item.rating) && (
                 <p className="mt-1 text-xs leading-5 text-gray-200 truncate">
-                  {[item.year, item.type, item.rating].filter(Boolean).join(" • ")}
+                  {[item.year, item.type, item.rating]
+                    .filter(Boolean)
+                    .join(" • ")}
                 </p>
               )}
             </div>
@@ -172,8 +191,10 @@ function Card({ item }) {
 
 Card.propTypes = {
   item: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    externalMediaId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     coverUrl: PropTypes.string,
+    posterUrl: PropTypes.string,
     title: PropTypes.string.isRequired,
     year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     type: PropTypes.string,

@@ -8,28 +8,26 @@ export const revalidate = 0;
 
 const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/";
 
-// Accept singular and plural paths
+// Accept only singular paths
 const normalizeTypeKey = (t = "") => {
   const key = String(t).toLowerCase();
-  if (key === "movies") return "movie";
-  if (key === "tvs" || key === "shows") return "tv";
-  if (key === "audios") return "audio";
-  if (key === "book") return "books";
+  if (key === "movie") return "movie";
+  if (key === "tv") return "tv";
+  if (key === "music" || key === "audio") return "music"; // TO DO: standardise to either "music" or "audio" to avoid confusion. I would reccomend "audio" if DB entries include podcasts
+  if (key === "books" || key === "book") return "books";
   return key;
 };
 
 // Map route key -> backend media type
 const typeMap = {
   movie: "MOVIE",
-  movies: "MOVIE",
   tv: "TV",
-  shows: "TV",
   music: "MUSIC",
-  audio: "MUSIC",
-  books: "BOOKS",
+  book: "BOOKS",
 };
 
-const toYear = (dateStr) => (dateStr ? Number(String(dateStr).slice(0, 4)) : undefined);
+const toYear = (dateStr) =>
+  dateStr ? Number(String(dateStr).slice(0, 4)) : undefined;
 
 function isFullUrl(value) {
   return typeof value === "string" && /^https?:\/\//i.test(value);
@@ -40,41 +38,25 @@ function withSize(path, size) {
   const p = String(path).startsWith("/") ? String(path) : `/${path}`;
   return `${TMDB_IMG_BASE}${size}${p}`;
 }
-function pickCover(posterPath, backdropPath, posterSize = "w342", backdropSize = "w780") {
-  return withSize(posterPath, posterSize) || withSize(backdropPath, backdropSize) || "/next.svg";
-}
-
-// Fallback mappers for discover endpoints
-function mapDiscoverMovies(json) {
-  const list = Array.isArray(json?.results) ? json.results : [];
-  return list.map((m) => ({
-    id: m.id,
-    title: m.title ?? "Untitled",
-    type: "movie",
-    year: (m.release_date || "").slice(0, 4) || undefined,
-    rating: typeof m.vote_average === "number" ? m.vote_average.toFixed(1) : undefined,
-    coverUrl: pickCover(m.poster_path, m.backdrop_path),
-    href: `/collection/movie/${m.id}`,
-  }));
-}
-function mapDiscoverTV(json) {
-  const list = Array.isArray(json?.results) ? json.results : [];
-  return list.map((m) => ({
-    id: m.id,
-    title: m.name ?? "Untitled",
-    type: "tv",
-    year: (m.first_air_date || "").slice(0, 4) || undefined,
-    rating: typeof m.vote_average === "number" ? m.vote_average.toFixed(1) : undefined,
-    coverUrl: pickCover(m.poster_path, m.backdrop_path),
-    href: `/collection/tv/${m.id}`,
-  }));
+function pickCover(
+  posterPath,
+  backdropPath,
+  posterSize = "w342",
+  backdropSize = "w780"
+) {
+  return (
+    withSize(posterPath, posterSize) ||
+    withSize(backdropPath, backdropSize) ||
+    "/next.svg"
+  );
 }
 
 /**
+ * Media page, showing grid of media items for a given media type (i.e. movie, tv, music, books).
  * @param {{ params: { id: string } }} props
  */
 export default async function MediaPage({ params }) {
-  const { mediaType: rawMediaType } = params;   // no `await` here!
+  const { mediaType: rawMediaType } = params;
   const mediaTypeKey = normalizeTypeKey(rawMediaType);
   const wantedType = typeMap[mediaTypeKey];
 
@@ -90,6 +72,7 @@ export default async function MediaPage({ params }) {
   }
 
   // 1) Try the user's library first
+  // NOT WORKING - TO DO: figure out if we need this, and if so fix or remove
   let items = raw
     .filter((ums) => ums?.media?.type === wantedType)
     .map((ums) => {
@@ -101,23 +84,49 @@ export default async function MediaPage({ params }) {
         year: toYear(m.releaseDate),
         type: (m.type || "").toLowerCase(),
         status: ums.status,
-        href: `/collection/${(m.type || "").toLowerCase()}/${m.mediaId ?? ums.id}`,
+        href: `/collection/${(m.type || "").toLowerCase()}/${
+          m.mediaId ?? ums.id
+        }`,
       };
     });
 
   // 2) If empty, fallback to discover so the page always shows posters
-  if (items.length === 0 && (mediaTypeKey === "movie" || mediaTypeKey === "movies" || mediaTypeKey === "tv")) {
+  if (
+    items.length === 0 &&
+    (mediaTypeKey === "movie" ||
+      mediaTypeKey === "tv" ||
+      mediaTypeKey === "music" ||
+      mediaTypeKey === "books")
+  ) {
     try {
       const base = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
-      const url =
-        mediaTypeKey === "tv"
-          ? `${base}/api/discover/tv`
-          : `${base}/api/discover/movies`;
+      let url;
+      if (mediaTypeKey === "tv") {
+        url = `${base}/api/v1/externalMediaData/tv`;
+      } else if (mediaTypeKey === "music") {
+        url = `${base}/api/v1/externalMediaData/music`;
+      } else if (mediaTypeKey === "books") {
+        url = `${base}/api/v1/externalMediaData/books`;
+      } else {
+        url = `${base}/api/v1/externalMediaData/movies`;
+      }
 
       const res = await fetch(url, { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
-        items = mediaTypeKey === "tv" ? mapDiscoverTV(data) : mapDiscoverMovies(data);
+        items = Array.isArray(data)
+          ? data.map((m) => ({
+              id: m.mediaId || m.externalMediaId || m.id,
+              title: m.title ?? "Untitled",
+              type: (m.type || "").toLowerCase(),
+              year: (m.releaseDate || "").slice(0, 4) || undefined,
+              rating: m.rating || undefined,
+              coverUrl: pickCover(m.posterUrl, m.backdropUrl),
+              href: `/collection/${(m.type || "").toLowerCase()}/${
+                m.mediaId || m.externalMediaId || m.id
+              }`,
+            }))
+          : [];
       } else {
         console.error("Discover fetch failed:", res.status, await res.text());
       }
@@ -125,9 +134,6 @@ export default async function MediaPage({ params }) {
       console.error("Discover fetch error:", e);
     }
   }
-
-  // Optional: log a few URLs to verify
-  // console.log("cover samples:", items.slice(0, 3).map(i => i.coverUrl));
 
   return (
     <div className="p-4">
