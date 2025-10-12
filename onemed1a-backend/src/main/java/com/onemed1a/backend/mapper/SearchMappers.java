@@ -1,4 +1,4 @@
-package com.onemed1a.backend.search.mapper;
+package com.onemed1a.backend.mapper;
 
 import com.onemed1a.backend.model.MediaData;
 import com.onemed1a.backend.dto.SearchResultItem;

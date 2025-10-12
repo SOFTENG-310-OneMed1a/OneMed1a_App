@@ -4,7 +4,7 @@ import com.onemed1a.backend.repository.MediaDataRepository;
 import com.onemed1a.backend.dto.SearchRequest;
 import com.onemed1a.backend.dto.SearchResultItem;
 import com.onemed1a.backend.dto.SuggestResultItem;
-import com.onemed1a.backend.search.mapper.SearchMappers;
+import com.onemed1a.backend.mapper.SearchMappers;
 import com.onemed1a.backend.repository.spec.MediaSearchSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
