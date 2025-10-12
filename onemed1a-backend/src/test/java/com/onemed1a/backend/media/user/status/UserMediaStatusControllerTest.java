@@ -1,16 +1,15 @@
 package com.onemed1a.backend.media.user.status;
 
-import com.onemed1a.backend.media.MediaData;
-import com.onemed1a.backend.usermediastatus.UserMediaStatus;
-import com.onemed1a.backend.usermediastatus.UserMediaStatusController;
-import com.onemed1a.backend.usermediastatus.UserMediaStatusService;
-import com.onemed1a.backend.usermediastatus.dto.UserMediaStatusDTO;
+import com.onemed1a.backend.model.MediaData;
+import com.onemed1a.backend.model.UserMediaStatus;
+import com.onemed1a.backend.controller.UserMediaStatusController;
+import com.onemed1a.backend.service.UserMediaStatusService;
+import com.onemed1a.backend.dto.UserMediaStatusDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,8 +1,8 @@
 package com.onemed1a.backend.media.recommendation;
 
-import com.onemed1a.backend.media.MediaData;
-import com.onemed1a.backend.media.MediaDataRepository;
-import com.onemed1a.backend.reccomendation.OpenAIService;
+import com.onemed1a.backend.model.MediaData;
+import com.onemed1a.backend.repository.MediaDataRepository;
+import com.onemed1a.backend.service.OpenAIService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

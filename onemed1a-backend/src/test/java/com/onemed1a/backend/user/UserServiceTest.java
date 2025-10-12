@@ -4,6 +4,12 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.onemed1a.backend.dto.CreateUserDTO;
+import com.onemed1a.backend.dto.UserDTO;
+import com.onemed1a.backend.model.User;
+import com.onemed1a.backend.repository.UserRepository;
+import com.onemed1a.backend.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,7 +44,7 @@ class UserServiceTest {
                 "Jane", 
                 "Smith", 
                 "jane@example.com",
-                User.Gender.FEMALE, 
+                User.Gender.FEMALE,
                 LocalDate.of(1990, 1, 1),
                 plainPassword);
 

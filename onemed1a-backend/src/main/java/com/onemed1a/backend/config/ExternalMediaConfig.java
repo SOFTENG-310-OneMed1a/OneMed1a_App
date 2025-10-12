@@ -1,6 +1,6 @@
 package com.onemed1a.backend.config;
 
-import com.onemed1a.backend.external.media.service.DataService;
+import com.onemed1a.backend.service.DataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;

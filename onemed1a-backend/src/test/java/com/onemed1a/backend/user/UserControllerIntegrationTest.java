@@ -4,6 +4,11 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.onemed1a.backend.dto.CreateUserDTO;
+import com.onemed1a.backend.dto.UpdateUserDTO;
+import com.onemed1a.backend.model.User;
+import com.onemed1a.backend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +35,8 @@ class UserControllerIntegrationTest {
 
     @Autowired MockMvc mvc;
     @Autowired ObjectMapper om;
-    @Autowired UserRepository repo;
+    @Autowired
+    UserRepository repo;
 
     UUID userId;
     String createdEmail;
@@ -44,7 +50,7 @@ class UserControllerIntegrationTest {
                 "Alice",
                 "Ng", 
                 createdEmail,
-                User.Gender.UNSPECIFIED, 
+                User.Gender.UNSPECIFIED,
                 LocalDate.of(2001, 7, 15),
                 plainPassword);
 

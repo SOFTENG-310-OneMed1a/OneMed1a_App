@@ -1,8 +1,8 @@
 package com.onemed1a.backend.search.mapper;
 
-import com.onemed1a.backend.media.MediaData;
-import com.onemed1a.backend.search.dto.SearchResultItem;
-import com.onemed1a.backend.search.dto.SuggestResultItem;
+import com.onemed1a.backend.model.MediaData;
+import com.onemed1a.backend.dto.SearchResultItem;
+import com.onemed1a.backend.dto.SuggestResultItem;
 
 public final class SearchMappers {
     private SearchMappers() {}
