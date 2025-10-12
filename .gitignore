@@ -59,4 +59,4 @@ build/
 .env.*.local
 
 # Spring Boot application properties
-src/main/resources/application.properties
+onemed1a-backend/src/main/resources/application.properties
