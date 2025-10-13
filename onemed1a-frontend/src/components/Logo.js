@@ -14,7 +14,7 @@ export default function Logo() {
       className="block"
     >
       <Image
-        src={hovered ? "/Logo (red).png" : "/Logo (black).png"}
+        src={hovered ? "/Logo (red).png" : "/Logo (black).png"} // Logo changes color on hover
         alt="OneMedia Logo"
         width={180}
         height={60}

@@ -24,7 +24,11 @@ export default function MediaNavigation() {
   }, [searchParams]);
 
   return (
-    <nav className="flex items-center justify-center" role="navigation" aria-label="Media categories">
+    <nav
+      className="flex items-center justify-center"
+      role="navigation"
+      aria-label="Media categories"
+    >
       <div className="flex flex-wrap justify-center gap-3">
         {tabs.map((t) => {
           const active = pathname?.startsWith(t.href);
@@ -33,8 +37,8 @@ export default function MediaNavigation() {
               key={t.name}
               href={t.href + (q ? `?q=${encodeURIComponent(q)}` : "")}
               aria-current={active ? "page" : undefined}
-              className={`px-4 py-1.5 text-sm font-semibold uppercase tracking-wide rounded-full transition-colors
-                ${active ? "bg-blue-600 text-white" : "bg-red-600 text-white hover:bg-red-700"}`}
+              className={`px-4 py-1.5 text-sm font-semibold uppercase tracking-wide transition-colors
+              ${active ? "text-red-600" : "text-black hover:text-red-600"}`}
             >
               {t.name}
             </Link>
