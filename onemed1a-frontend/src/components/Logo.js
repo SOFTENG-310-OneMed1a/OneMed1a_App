@@ -3,6 +3,9 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+/**
+ * Logo component that changes appearance based on hover state (black to red).
+ */
 export default function Logo({ isAuth }) {
   const [hovered, setHovered] = useState(false);
 

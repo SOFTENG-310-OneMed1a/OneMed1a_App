@@ -3,6 +3,11 @@ import "./globals.css";
 import PropTypes from "prop-types";
 import NavigationBar from "../components/NavigationBar";
 
+/**
+ * RootLayout component that wraps the entire application.
+ * Applies global styles to the body and includes the NavigationBar.
+ */
+
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
