@@ -3,9 +3,10 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import PropTypes from "prop-types";
-import {suggest} from "@/api/searchAPI";
+import { suggest } from "@/api/searchAPI";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
 
 export default function SearchBar({ items }) {
   const [query, setQuery] = useState("");
@@ -15,7 +16,8 @@ export default function SearchBar({ items }) {
   const timerRef = useRef(null);
   const router = useRouter();
 
-  const mapTypeToCategory = (type) => (typeof type === "string" ? type.toLowerCase() : "");
+  const mapTypeToCategory = (type) =>
+    typeof type === "string" ? type.toLowerCase() : "";
 
   const fetchSuggestions = async (value) => {
     if (abortRef.current) abortRef.current.abort();
@@ -25,13 +27,14 @@ export default function SearchBar({ items }) {
     try {
       const searchResults = await suggest(query);
 
-      setResults(searchResults.map(item => ({
+      setResults(
+        searchResults.map((item) => ({
           id: item.id,
           title: item.title,
           year: item.year,
           category: mapTypeToCategory(item.type),
-      })));
-
+        }))
+      );
     } catch (e) {
       if (e.name !== "AbortError") {
         console.error("Suggest failed:", e);
@@ -46,8 +49,6 @@ export default function SearchBar({ items }) {
     const value = e.target.value;
     setQuery(value);
 
-
-
     if (timerRef.current) clearTimeout(timerRef.current);
 
     if (!value.trim() || value.trim().length < 2) {
@@ -60,7 +61,9 @@ export default function SearchBar({ items }) {
       if (items && Array.isArray(items) && items.length) {
         // Optional local fallback dataset
         const filtered = items
-          .filter((item) => item.title.toLowerCase().includes(value.toLowerCase()))
+          .filter((item) =>
+            item.title.toLowerCase().includes(value.toLowerCase())
+          )
           .slice(0, 5);
         setResults(filtered);
       } else {
@@ -83,7 +86,7 @@ export default function SearchBar({ items }) {
         value={query}
         onChange={handleChange}
         placeholder="Search..."
-        className="w-full px-3 py-2 border rounded shadow-sm"
+        className="w-full px-3 py-2 border rounded-full shadow-sm"
         aria-autocomplete="list"
         aria-expanded={results.length > 0}
         aria-controls="search-suggest"

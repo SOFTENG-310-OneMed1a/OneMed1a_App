@@ -37,7 +37,7 @@ export default function MediaNavigation() {
       role="navigation"
       aria-label="Media categories"
     >
-      <div className="flex flex-wrap justify-center gap-3">
+      <div className="flex flex-wrap justify-center gap-1.5">
         {tabs.map((t) => {
           // Determine if this tab is active based on the current pathname
           const active = pathname?.startsWith(t.href);
