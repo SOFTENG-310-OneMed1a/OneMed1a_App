@@ -1,18 +1,25 @@
-import { Poppins } from "next/font/google";
+"use client"; // needed if you're on Next.js App Router
+import { useState } from "react";
 import Link from "next/link";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["700"],
-});
+import Image from "next/image";
 
 export default function Logo() {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <Link
       href="/"
-      className={`${poppins.className} text-5xl font-bold tracking-tight text-red-600 hover:text-blue-600 transition-colors`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="block"
     >
-      onemedia
+      <Image
+        src={hovered ? "/Logo (red).png" : "/Logo (black).png"}
+        alt="OneMedia Logo"
+        width={180}
+        height={60}
+        priority
+      />
     </Link>
   );
 }
