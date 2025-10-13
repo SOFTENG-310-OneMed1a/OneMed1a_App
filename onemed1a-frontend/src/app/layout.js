@@ -1,7 +1,7 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import PropTypes from "prop-types";
-import ConditionalAppChrome from "../components/ConditionalAppChrome"; // [`ConditionalAppChrome`](onemed1a-frontend/src/components/ConditionalAppChrome.js)
+import NavigationBar from "../components/NavigationBar";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -21,8 +21,10 @@ export default function RootLayout({ children }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className={`${poppins.variable} antialiased bg-white text-neutral-900`}>
-        <ConditionalAppChrome />
+      <body
+        className={`${poppins.variable} antialiased bg-white text-neutral-900`}
+      >
+        <NavigationBar />
         {children}
       </body>
     </html>

@@ -4,6 +4,14 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
+/**
+ * MediaNavigation component for navigating between media tabs: Movies, TV, Books, Audio.
+ * Highlights the active tab based on the current pathname.
+ * Preserves the search query parameter 'q' when switching tabs.
+ *
+ * Used in the navigation bar of the application.
+ * @returns
+ */
 export default function MediaNavigation() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -31,6 +39,7 @@ export default function MediaNavigation() {
     >
       <div className="flex flex-wrap justify-center gap-3">
         {tabs.map((t) => {
+          // Determine if this tab is active based on the current pathname
           const active = pathname?.startsWith(t.href);
           return (
             <Link

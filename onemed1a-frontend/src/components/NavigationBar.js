@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import Logo from './Logo';
-import MediaNavigation from './MediaNavigation';
-import SearchBar from './SearchBar';
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import Logo from "./Logo";
+import MediaNavigation from "./MediaNavigation";
+import SearchBar from "./SearchBar";
 
-export default function ConditionalAppChrome() {
-  const pathname = usePathname() || '/';
-  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup');
+export default function NavigationBar() {
+  const pathname = usePathname() || "/";
+  const isAuthRoute =
+    pathname.startsWith("/login") || pathname.startsWith("/signup");
   if (isAuthRoute) return null;
 
   return (
