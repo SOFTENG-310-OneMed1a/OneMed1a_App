@@ -4,6 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import Card from "./Card";
 
+/**
+ * MediaGrid component to display a grid of media items (in Card) with infinite scroll.
+ */
+
 const DEFAULT_PAGE_SIZE = 40;
 const OBS_ROOT_MARGIN = "800px 0px";
 
@@ -74,6 +78,7 @@ export default function MediaGrid({ items, pageSize = DEFAULT_PAGE_SIZE }) {
     return buckets;
   }, [data, visibleCount, cols]);
 
+  // Style grid columns
   const gridCols =
     "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4";
 

@@ -1,3 +1,14 @@
+/**
+ * mediaUtils.js - Utility functions for media data handling
+ * Includes:
+ * - Image URL construction
+ * - Media type normalization and mapping
+ * - Year extraction
+ * - Cover image selection
+ * - Generic JSON fetcher
+ */
+
+// --- Image helpers ---------------------------------------------------------
 export const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/";
 
 // Normalize media type keys from route or API
@@ -18,13 +29,20 @@ export const typeMap = {
   books: "BOOKS",
 };
 
+/**
+ * Extract the year from a date string.
+ */
 export const toYear = (dateStr) =>
   dateStr ? Number(String(dateStr).slice(0, 4)) : undefined;
 
+/** Check if a URL is fully qualified */
 export function isFullUrl(value) {
   return typeof value === "string" && /^https?:\/\//i.test(value);
 }
 
+/**
+ * Get a resized image URL for TMDB-like paths or return full URLs as is.
+ */
 export function withSize(path, size = "w500") {
   if (!path) return null;
   if (isFullUrl(path)) return path;
@@ -32,6 +50,9 @@ export function withSize(path, size = "w500") {
   return `${TMDB_IMG_BASE}${size}${p}`;
 }
 
+/**
+ * Get the appropriate cover image URL (poster preferred, then backdrop, else placeholder).
+ */
 export function pickCover(
   posterPath,
   backdropPath,
@@ -54,7 +75,9 @@ export function pickCover(
   return "/placeholder-movie.png";
 }
 
-// Generic fetch helper
+/**
+ * Generic JSON fetcher for backend API calls.
+ */
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 export async function fetchJSON(path) {
   try {

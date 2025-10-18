@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Card from "@/components/Card";
 import MediaGrid from "@/components/MediaGrid";
 import { pickCover, fetchJSON } from "@/lib/mediaUtils";
 
+/**
+ * UserMediaPage component for displaying user's media collection (inside profile).
+ * Used in dynamic routes for different media types (e.g., movies, tv, music, books).
+ */
 export default function UserMediaPage({ mediaType }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,6 +26,7 @@ export default function UserMediaPage({ mediaType }) {
         `/api/v1/usermedia/user/${cookieUserId}?type=${mediaType.toUpperCase()}`
       );
 
+      // Map raw media to display items
       const mapped = rawMedia.map((m) => {
         const posterPath =
           m.media.tmdbPosterPath ?? m.media.posterUrl ?? m.media.coverUrl;

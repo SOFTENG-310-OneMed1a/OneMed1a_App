@@ -3,6 +3,9 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
 
+/**
+ * Card component to display media item information.
+ */
 export default function Card({ item }) {
   const [loaded, setLoaded] = useState(false);
   // Use coverUrl, fallback to posterUrl, fallback to /next.svg
@@ -13,6 +16,7 @@ export default function Card({ item }) {
   const id = item.id || item.externalMediaId;
   const targetHref = hasHref ? item.href : `/collection/${item.type}/${id}`;
 
+  // Wrapper classes for the card link
   const wrapperClasses =
     "block min-h-[44px] min-w-[44px] overflow-hidden group " +
     "rounded-xl bg-[color:var(--card)] text-[color:var(--card-foreground)] " +
@@ -77,7 +81,7 @@ export default function Card({ item }) {
         </div>
       </div>
 
-      {/* Remove the padding div since we don't need space for the title */}
+      {/* Show more info on focus/hover */}
       <div className="sr-only">
         {item.title} {item.year ? `(${item.year})` : ""}
       </div>
