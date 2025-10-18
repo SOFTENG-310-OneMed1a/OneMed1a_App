@@ -3,6 +3,7 @@ import Link from "next/link";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
 import StarRating from "@/app/media-details-components/StarRating";
+import ReviewSection from "@/app/media-details-components/ReviewSection";
 import Divider from "@/app/media-details-components/Divider";
 import { getMediaById } from "@/api/mediaClient";
 import { cookies } from "next/headers";
@@ -141,6 +142,18 @@ export default async function TvShowPage({ params }) {
           value={result && result.rating ? result.rating : 0}
           updatedAt={result && result.updatedAt}
           statusId={result && result.id}
+        />
+
+        <Divider />
+
+        <ReviewSection
+          userId={userId}
+          mediaId={show.mediaId}
+          mediaType={show.type}
+          initialReviewText={result?.reviewText || ""}
+          statusId={result?.id}
+          currentStatus={result?.status}
+          currentRating={result?.rating}
         />
 
         <Divider />
