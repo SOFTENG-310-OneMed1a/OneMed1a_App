@@ -1,20 +1,22 @@
 package com.onemed1a.backend.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import com.onemed1a.backend.model.MediaData;
-import com.onemed1a.backend.model.MediaData.MediaType;
-import com.onemed1a.backend.repository.MediaDataRepository;
-import com.onemed1a.backend.repository.UserMediaStatusRepository;
-import com.onemed1a.backend.model.User;
-import com.onemed1a.backend.repository.UserRepository;
-import com.onemed1a.backend.model.UserMediaStatus;
-import com.onemed1a.backend.model.UserMediaStatus.Status;
-
-import com.onemed1a.backend.dto.UserMediaStatusDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import com.onemed1a.backend.dto.UserMediaStatusDTO;
+import com.onemed1a.backend.model.MediaData;
+import com.onemed1a.backend.model.MediaData.MediaType;
+import com.onemed1a.backend.model.User;
+import com.onemed1a.backend.model.UserMediaStatus;
+import com.onemed1a.backend.model.UserMediaStatus.Status;
+import com.onemed1a.backend.repository.MediaDataRepository;
+import com.onemed1a.backend.repository.UserMediaStatusRepository;
+import com.onemed1a.backend.repository.UserRepository;
 
 /**
  * Service layer for UserMedia. Implements the logic expected by the controller:
@@ -122,4 +124,20 @@ public class UserMediaStatusService {
         return false;
     }
 
+    public Map<String, Long> getUserMediaCountsByType(UUID userId) {
+        List<UserMediaStatus> userMedia = userMediaStatusRepository.findByUser_Id(userId);
+
+        Map<MediaData.MediaType, Long> counts = userMedia.stream()
+            .collect(Collectors.groupingBy(
+                (UserMediaStatus status) -> status.getMedia().getType(),
+                Collectors.counting()
+            ));
+
+        return Map.of(
+            "movieCount", counts.getOrDefault(MediaData.MediaType.MOVIE, 0L),
+            "tvCount", counts.getOrDefault(MediaData.MediaType.TV, 0L), 
+            "musicCount", counts.getOrDefault(MediaData.MediaType.MUSIC, 0L),
+            "booksCount", counts.getOrDefault(MediaData.MediaType.BOOKS, 0L)
+        );
+    }
 }
