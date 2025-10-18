@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    unoptimized: true,
+    unoptimized: false,
     domains: [
-      "image.tmdb.org",              // TMDB
+      "image.tmdb.org", // TMDB
       "books.googleusercontent.com", // Google Books covers
-      "i.scdn.co",                   // Spotify
+      "i.scdn.co", // Spotify
     ],
   },
 };

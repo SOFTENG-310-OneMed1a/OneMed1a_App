@@ -134,10 +134,10 @@ export default async function ProfilePage() {
       <section>
         <h2 className="text-lg font-medium mb-3">Your library</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard label="Movies" value={mediaStats.MOVIE} href="/movie" />
-          <StatCard label="TV" value={mediaStats.TV} href="/tv" />
-          <StatCard label="Music" value={mediaStats.MUSIC} href="/music" />
-          <StatCard label="Books" value={mediaStats.BOOKS} href="/books" />
+          <StatCard label="Movies" value={mediaStats.MOVIE} href="/user/movie" />
+          <StatCard label="TV" value={mediaStats.TV} href="/user/tv" />
+          <StatCard label="Music" value={mediaStats.MUSIC} href="/user/music" />
+          <StatCard label="Books" value={mediaStats.BOOKS} href="/user/books" />
         </div>
       </section>
 
