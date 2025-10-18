@@ -138,7 +138,7 @@ export default async function MoviePage({ params }) {
                 {(movie.genres || []).map((genre) => (
                   <span
                     key={genre}
-                    className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium"
+                    className="bg-black text-white px-3 py-1 rounded text-sm font-medium"
                   >
                     {genre}
                   </span>
