@@ -25,6 +25,7 @@ import com.onemed1a.backend.repository.UserRepository;
  * - Upsert (create or update) a status
  * - Update an existing status
  * - Delete a status
+ * - Get counts of media items by type for a given user
  * Notes:
  * - This implementation loads from the repository and filters/sorts in-memory
  *   to avoid tight coupling to repository query definitions while branches are diverged.
@@ -124,6 +125,11 @@ public class UserMediaStatusService {
         return false;
     }
 
+    /**
+     * Get counts of media items by type for a given user.
+     * @param userId the user's UUID
+     * @return a map with counts for each media type (movieCount, tvCount, musicCount, booksCount)
+     */
     public Map<String, Long> getUserMediaCountsByType(UUID userId) {
         List<UserMediaStatus> userMedia = userMediaStatusRepository.findByUser_Id(userId);
 

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
+
 export default function Card({ item }) {
   const [loaded, setLoaded] = useState(false);
   // Use coverUrl, fallback to posterUrl, fallback to /next.svg
@@ -24,8 +25,9 @@ export default function Card({ item }) {
 
   const content = (
     <>
-      <div className="relative w-full">
-        <div className="aspect-[2/3] w-full overflow-hidden rounded-t-xl">
+      <div className="relative w-full aspect-[2/3]">
+        {/* Image container */}
+        <div className="absolute inset-0 overflow-hidden rounded-xl">
           {!loaded && (
             <div
               className="h-full w-full animate-pulse bg-[color:var(--skeleton,#e5e7eb)]"
@@ -47,22 +49,24 @@ export default function Card({ item }) {
           />
         </div>
 
+        {/* Overlay with title and info - appears only on hover */}
         <div
           className="
-            pointer-events-none absolute inset-x-0 bottom-0
-            translate-y-1 opacity-0 transition
-            group-hover:opacity-100 group-hover:translate-y-0
-            group-focus-within:opacity-100 group-focus-within:translate-y-0
+            absolute inset-0
+            bg-gradient-to-t from-black/90 via-black/50 to-transparent
+            opacity-0 transition-opacity duration-200
+            group-hover:opacity-100 group-focus-within:opacity-100
+            rounded-xl
           "
           aria-hidden="true"
         >
-          <div className="from-black/70 via-black/40 to-transparent bg-gradient-to-t px-4 pt-6 pb-3">
+          <div className="absolute bottom-0 left-0 right-0 p-4">
             <div className="text-white">
-              <h3 className="text-sm font-semibold leading-snug line-clamp-2">
+              <h3 className="text-sm font-semibold leading-snug line-clamp-2 mb-1">
                 {item.title}
               </h3>
               {(item.year || item.type || item.rating) && (
-                <p className="mt-1 text-xs leading-5 text-gray-200 truncate">
+                <p className="text-xs leading-5 text-gray-200 truncate">
                   {[item.year, item.type, item.rating]
                     .filter(Boolean)
                     .join(" • ")}
@@ -73,10 +77,9 @@ export default function Card({ item }) {
         </div>
       </div>
 
-      <div className="p-4 pt-3">
-        <span className="sr-only">
-          {item.title} {item.year ? `(${item.year})` : ""}
-        </span>
+      {/* Remove the padding div since we don't need space for the title */}
+      <div className="sr-only">
+        {item.title} {item.year ? `(${item.year})` : ""}
       </div>
     </>
   );
