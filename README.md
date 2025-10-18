@@ -46,17 +46,19 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#setup-instructions">Set Up Instructions</a></li>
+        <li><a href="#setup-instructions">Setup Instructions</a></li>
         <li><a href="#configuration">Configuration</a></li>
         <li><a href="#troubleshooting">Troubleshooting</a></li>
       </ul>
     </li>
     <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a>
+    <li>
+      <a href="#contributing">Contributing</a>
       <ul>
         <li><a href="#top-contributors">Top Contributors</a></li>
         <li><a href="#team">Team</a></li>
-      </ul>    </li>
+      </ul>
+    </li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
