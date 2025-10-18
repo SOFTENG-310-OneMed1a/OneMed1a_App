@@ -104,6 +104,7 @@ This project also supports the SOFTENG 310 learning outcomes:
 
 - [![JavaScript][JavaScript]][JavaScript-url]
 - [![Next.js][Next.js]][Next-url]
+- [![React][React.js]][React-url]
 
 #### Backend:
 
@@ -131,7 +132,7 @@ Install the following before setup:
 - [Node.js](https://nodejs.org/) (v18+)
 - [Java 21+](https://adoptium.net/)
 - [Maven](https://maven.apache.org/)
-- [Docker](https://www.docker.com/) (for containerized PostgreSQL)
+- [Docker](https://www.docker.com/) or [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for containerized PostgreSQL)
 - [Git](https://git-scm.com/)
 
 ### Setup Instructions
@@ -193,6 +194,13 @@ For access to API keys and detailed configuration instructions, please contact:
 
 Reset Docker containers to resolve common backend issues:
 
+1. **Ensure Docker is running:**
+
+   - Open Docker Desktop (if using Windows/macOS)
+   - Or start Docker service: `sudo systemctl start docker` (Linux)
+
+2. **Reset containers:**
+
 ```bash
 docker compose down -v    # Stop and remove containers
 docker compose up -d      # Restart containers in background
@@ -200,28 +208,29 @@ docker compose up -d      # Restart containers in background
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Roadmap
+# Roadmap
 
-### ✅ Assignment 1 (Completed)
+## ✅ Assignment 1 (Completed)
 
-- [x] Backend API endpoints for media display (books, movies, audio, TV)
-- [x] Frontend user media pages
-- [x] Media detail pages
-- [x] Search functionality
-- [x] Cross-media recommendation system + page
-- [x] API integration for media recommendations
+- [x] Backend API endpoints for media types (books, movies, TV, audio)
+- [x] Frontend media listing & detail pages
+- [x] Search functionality across all media types
+- [x] Cross-media recommendation engine & recommendations page
+- [x] API integrations for fetching external media data
 
-### 🚧 Assignment 2 (In Progress)
+---
 
-- [ ] Refactor backend repository structure
-- [ ] UI component redesign (Figma)
-- [ ] Improved user interface (navigation, layouts, etc.)
-- [ ] Star rating system implementation
-- [ ] User authentication and profile pages
-- [ ] Media reviews functionality
-- [ ] Personalized media lists for users
-- [ ] Fix broken backend tests
-- [ ] Bug fixes from Assignment 1
+## 🚧 Assignment 2 (In Progress)
+
+- [ ] **Refactor backend structure** for maintainability and scalability
+- [ ] **UI/UX redesign** (Figma prototypes → React components)
+- [ ] Improved **navigation, layouts, and responsiveness**
+- [ ] **Star rating system** for user feedback
+- [ ] **User authentication & profiles** (sign up, login, account management)
+- [ ] **Media reviews** (users can write and read reviews)
+- [ ] **Personalized lists** (watchlist, reading list, playlists, etc.)
+- [ ] **Backend test fixes** and expanded coverage
+- [ ] **Bug fixes & performance improvements** from Assignment 1
 
 See the [open issues](https://github.com/UOA-DCML/se310-plateful/issues) for a complete list of proposed features and known issues.
 
@@ -331,3 +340,5 @@ See the LICENSE file for details.
 [Spotify-url]: https://developer.spotify.com/
 [OpenAI]: https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white
 [OpenAI-url]: https://platform.openai.com/
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://reactjs.org/
