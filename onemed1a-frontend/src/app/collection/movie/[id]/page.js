@@ -155,6 +155,12 @@ export default async function MoviePage({ params }) {
           </div>
         </div>
 
+        <SaveButton
+          userId={userId}
+          mediaId={movie.mediaId}
+          mediaType={"movie"}
+        />
+
         {/* Description - shown on mobile only, under everything */}
         <div className="lg:hidden mt-8">
           <p className="text-gray-700 leading-relaxed">
@@ -185,8 +191,6 @@ export default async function MoviePage({ params }) {
           />
         </div>
       </div>
-
-      <SaveButton userId={userId} mediaId={movie.mediaId} />
     </main>
   );
 }

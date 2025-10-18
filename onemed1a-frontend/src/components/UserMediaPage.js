@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Card from "@/components/Card";
-import { pickCover, fetchJSON } from "@/lib/mediaUtils";
 import MediaGrid from "@/components/MediaGrid";
+import { pickCover, fetchJSON } from "@/lib/mediaUtils";
 
-export default function UserMoviesPage() {
+export default function UserMediaPage({ mediaType }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadMovies() {
+    async function loadMedia() {
       const cookieUserId = document.cookie
         .split("; ")
         .find((c) => c.startsWith("userId="))
@@ -18,15 +18,18 @@ export default function UserMoviesPage() {
 
       if (!cookieUserId) return;
 
-      const movies = await fetchJSON(
-        `/api/v1/usermedia/user/${cookieUserId}?type=MOVIE`
+      // Fetch user media for the given type
+      const rawMedia = await fetchJSON(
+        `/api/v1/usermedia/user/${cookieUserId}?type=${mediaType.toUpperCase()}`
       );
 
-      const mapped = movies.map((m) => {
-        const posterPath = m.media.tmdbPosterPath ?? m.media.posterUrl;
-        const backdropPath = m.media.tmdbBackdropPath ?? m.media.backdropUrl;
+      const mapped = rawMedia.map((m) => {
+        const posterPath =
+          m.media.tmdbPosterPath ?? m.media.posterUrl ?? m.media.coverUrl;
+        const backdropPath =
+          m.media.tmdbBackdropPath ?? m.media.backdropUrl ?? m.media.coverUrl;
 
-        const type = "movie"; // could be dynamic if you support multiple types
+        const type = mediaType.toLowerCase();
         const id = m.media.mediaId ?? m.id;
 
         return {
@@ -38,7 +41,7 @@ export default function UserMoviesPage() {
           year: m.media.releaseDate?.split("-")[0],
           type,
           rating: m.rating,
-          href: `/collection/${type}/${id}`, // dynamically build link
+          href: `/collection/${type}/${id}`, // dynamic link
         };
       });
 
@@ -46,15 +49,17 @@ export default function UserMoviesPage() {
       setLoading(false);
     }
 
-    loadMovies();
-  }, []);
+    loadMedia();
+  }, [mediaType]);
 
-  if (loading) return <p>Loading your movies...</p>;
-  if (items.length === 0) return <p>No movies saved yet.</p>;
+  if (loading) return <p>Loading your {mediaType}...</p>;
+  if (items.length === 0) return <p>No {mediaType} saved yet.</p>;
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-semibold mb-4">Your Movies</h1>
+      <h1 className="text-2xl font-semibold mb-4">
+        Your {mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}
+      </h1>
       <MediaGrid items={items} />
     </div>
   );

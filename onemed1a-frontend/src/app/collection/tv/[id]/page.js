@@ -4,6 +4,7 @@ import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
 import StarRating from "@/app/media-details-components/StarRating";
 import Divider from "@/app/media-details-components/Divider";
+import SaveButton from "@/app/media-details-components/SaveButton";
 import { getMediaById } from "@/api/mediaClient";
 import { cookies } from "next/headers";
 import CollectionDropdown from "@/app/media-details-components/CollectionDropdown";
@@ -22,8 +23,17 @@ function withSize(path, size) {
   const p = String(path).startsWith("/") ? String(path) : `/${path}`;
   return `${TMDB_IMG_BASE}${size}${p}`;
 }
-function pickCover(posterPath, backdropPath, posterSize = "w500", backdropSize = "w780") {
-  return withSize(posterPath, posterSize) || withSize(backdropPath, backdropSize) || "/next.svg";
+function pickCover(
+  posterPath,
+  backdropPath,
+  posterSize = "w500",
+  backdropSize = "w780"
+) {
+  return (
+    withSize(posterPath, posterSize) ||
+    withSize(backdropPath, backdropSize) ||
+    "/next.svg"
+  );
 }
 
 // --- Data fetchers ---------------------------------------------------------
@@ -65,7 +75,10 @@ export default async function TvShowPage({ params }) {
       <div className="mx-auto w-full max-w-6xl px-4 pb-20">
         {/* Back button */}
         <div className="pt-8 mb-8">
-          <Link href="/tv" className="inline-flex items-center gap-2 text-gray-800 hover:text-gray-600">
+          <Link
+            href="/tv"
+            className="inline-flex items-center gap-2 text-gray-800 hover:text-gray-600"
+          >
             <span className="text-2xl">←</span>
             <span className="sr-only">Back to TV</span>
           </Link>
@@ -85,14 +98,20 @@ export default async function TvShowPage({ params }) {
           {/* Content */}
           <div className="flex-1">
             <div className="mb-6">
-              <h1 className="text-4xl font-bold mb-2 text-gray-900">{show.title}</h1>
+              <h1 className="text-4xl font-bold mb-2 text-gray-900">
+                {show.title}
+              </h1>
               <div className="text-gray-600 mb-3">
                 <div className="flex flex-wrap items-center gap-4 text-sm">
                   {show.firstAirYear && <span>{show.firstAirYear}</span>}
                   {show.seasons != null && (
-                    <span>• {show.seasons} season{show.seasons === 1 ? "" : "s"}</span>
+                    <span>
+                      • {show.seasons} season{show.seasons === 1 ? "" : "s"}
+                    </span>
                   )}
-                  {show.episodes != null && <span>• {show.episodes} episodes</span>}
+                  {show.episodes != null && (
+                    <span>• {show.episodes} episodes</span>
+                  )}
                   {show.network && <span>• Network: {show.network}</span>}
                 </div>
               </div>
@@ -110,7 +129,10 @@ export default async function TvShowPage({ params }) {
               {/* Genre pills */}
               <div className="flex flex-wrap gap-2 mb-6">
                 {(show.genres || []).map((genre) => (
-                  <span key={genre} className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium">
+                  <span
+                    key={genre}
+                    className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium"
+                  >
                     {genre}
                   </span>
                 ))}
@@ -132,6 +154,8 @@ export default async function TvShowPage({ params }) {
             {show.description || "No synopsis available."}
           </p>
         </div>
+
+        <SaveButton userId={userId} mediaId={show.mediaId} mediaType="TV" />
 
         <Divider />
 

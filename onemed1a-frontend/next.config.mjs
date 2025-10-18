@@ -4,6 +4,7 @@ const nextConfig = {
     unoptimized: false,
     domains: [
       "image.tmdb.org", // TMDB
+      "books.google.com", // Google Books covers
       "books.googleusercontent.com", // Google Books covers
       "i.scdn.co", // Spotify
     ],

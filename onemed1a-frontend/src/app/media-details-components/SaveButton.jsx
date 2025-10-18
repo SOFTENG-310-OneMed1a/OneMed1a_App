@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
-export default function SaveButton({ userId, mediaId }) {
+export default function SaveButton({ userId, mediaId, mediaType = "movie" }) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -14,10 +14,11 @@ export default function SaveButton({ userId, mediaId }) {
       const payload = {
         userId,
         mediaId,
-        status: "PLAN_TO_WATCH", // TO DO: make this dynamic
+        type: mediaType.toUpperCase(), // dynamically include media type
+        status: "PLAN_TO_WATCH", // you could also pass this dynamically
       };
 
-      console.log("Sending payload:", payload);
+      console.log("Saving payload:", payload);
 
       const res = await fetch(`${API_BASE}/api/v1/usermedia`, {
         method: "POST",
@@ -42,9 +43,15 @@ export default function SaveButton({ userId, mediaId }) {
     <button
       onClick={handleSave}
       disabled={saving || saved}
-      className="rounded-xl bg-blue-600 text-white px-4 py-2 hover:opacity-90"
+      className="rounded-xl bg-blue-600 text-white px-4 py-2 hover:opacity-90 mt-4"
     >
-      {saved ? "Saved!" : saving ? "Saving..." : "Save to My Movies"}
+      {saved
+        ? "Saved!"
+        : saving
+        ? "Saving..."
+        : `Save to My ${
+            mediaType.charAt(0).toUpperCase() + mediaType.slice(1)
+          }`}
     </button>
   );
 }

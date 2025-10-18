@@ -5,6 +5,7 @@ import PosterImage from "@/app/media-details-components/PosterImage";
 import StarRating from "@/app/media-details-components/StarRating";
 import CollectionDropdown from "@/app/media-details-components/CollectionDropdown";
 import Divider from "@/app/media-details-components/Divider";
+import SaveButton from "@/app/media-details-components/SaveButton";
 import { getMediaById } from "@/api/mediaClient";
 import { cookies } from "next/headers";
 import { getStatus } from "@/api/mediaAPI";
@@ -37,7 +38,11 @@ function normalizeBookUrl(path) {
  * Books often only have a single cover URL; backdrop may be absent.
  */
 function pickCover(posterPath, backdropPath) {
-  return normalizeBookUrl(posterPath) || normalizeBookUrl(backdropPath) || "/next.svg";
+  return (
+    normalizeBookUrl(posterPath) ||
+    normalizeBookUrl(backdropPath) ||
+    "/next.svg"
+  );
 }
 
 // --- Data fetchers ---------------------------------------------------------
@@ -109,7 +114,9 @@ export default async function BookPage({ params }) {
           <div className="flex-1">
             {/* Title and basic info */}
             <div className="mb-6">
-              <h1 className="text-4xl font-bold mb-2 text-gray-900">{book.title}</h1>
+              <h1 className="text-4xl font-bold mb-2 text-gray-900">
+                {book.title}
+              </h1>
 
               <div className="text-gray-600 mb-3">
                 {/* Authors */}
@@ -120,7 +127,9 @@ export default async function BookPage({ params }) {
                 {/* Meta row */}
                 <div className="flex flex-wrap items-center gap-4 text-sm">
                   {book.releaseDate && <span>{book.releaseDate}</span>}
-                  {book.pageCount != null && <span>• {book.pageCount} pages</span>}
+                  {book.pageCount != null && (
+                    <span>• {book.pageCount} pages</span>
+                  )}
                   {book.publisher && <span>• Publisher: {book.publisher}</span>}
                   {book.isbn && <span>• ISBN: {book.isbn}</span>}
                 </div>
@@ -154,6 +163,8 @@ export default async function BookPage({ params }) {
             {book.description || "No synopsis available."}
           </p>
         </div>
+
+        <SaveButton userId={userId} mediaId={book.mediaId} mediaType="Books" />
 
         <Divider />
 
