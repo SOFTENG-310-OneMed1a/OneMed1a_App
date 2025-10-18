@@ -145,6 +145,15 @@ export default async function TvShowPage({ params }) {
                 {show.description || "No synopsis available."}
               </p>
             </div>
+
+            {/* Save button */}
+            <div className="mt-6 flex">
+              <SaveButton
+                userId={userId}
+                mediaId={show.mediaId}
+                mediaType={show.type}
+              />
+            </div>
           </div>
         </div>
 
@@ -154,8 +163,6 @@ export default async function TvShowPage({ params }) {
             {show.description || "No synopsis available."}
           </p>
         </div>
-
-        <SaveButton userId={userId} mediaId={show.mediaId} mediaType="TV" />
 
         <Divider />
 

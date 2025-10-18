@@ -43,7 +43,7 @@ export default function SaveButton({ userId, mediaId, mediaType = "movie" }) {
     <button
       onClick={handleSave}
       disabled={saving || saved}
-      className="rounded-xl bg-blue-600 text-white px-4 py-2 hover:opacity-90 mt-4"
+      className="rounded-xl bg-[#F13738] text-white px-4 py-2 hover:opacity-90 mt-4"
     >
       {saved
         ? "Saved!"

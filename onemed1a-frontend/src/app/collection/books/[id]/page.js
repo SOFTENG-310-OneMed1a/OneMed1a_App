@@ -154,6 +154,15 @@ export default async function BookPage({ params }) {
                 {book.description || "No synopsis available."}
               </p>
             </div>
+
+            {/* Save button */}
+            <div className="mt-6 flex">
+              <SaveButton
+                userId={userId}
+                mediaId={book.mediaId}
+                mediaType="Books"
+              />
+            </div>
           </div>
         </div>
 
@@ -163,8 +172,6 @@ export default async function BookPage({ params }) {
             {book.description || "No synopsis available."}
           </p>
         </div>
-
-        <SaveButton userId={userId} mediaId={book.mediaId} mediaType="Books" />
 
         <Divider />
 

@@ -152,14 +152,17 @@ export default async function MoviePage({ params }) {
                 {movie.description || "No synopsis available."}
               </p>
             </div>
+
+            {/* Save button */}
+            <div className="mt-6 flex">
+              <SaveButton
+                userId={userId}
+                mediaId={movie.mediaId}
+                mediaType={"movie"}
+              />
+            </div>
           </div>
         </div>
-
-        <SaveButton
-          userId={userId}
-          mediaId={movie.mediaId}
-          mediaType={"movie"}
-        />
 
         {/* Description - shown on mobile only, under everything */}
         <div className="lg:hidden mt-8">

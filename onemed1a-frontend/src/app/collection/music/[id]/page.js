@@ -153,6 +153,15 @@ export default async function MusicPage({ params }) {
                 {album.description || "No description available."}
               </p>
             </div>
+
+            {/* Save button */}
+            <div className="mt-6 flex">
+              <SaveButton
+                userId={userId}
+                mediaId={album.mediaId}
+                mediaType="music"
+              />
+            </div>
           </div>
         </div>
 
@@ -162,8 +171,6 @@ export default async function MusicPage({ params }) {
             {album.description || "No description available."}
           </p>
         </div>
-
-        <SaveButton userId={userId} mediaId={album.mediaId} mediaType="music" />
 
         {/* Track list */}
         <div className="mt-8">
