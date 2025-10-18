@@ -25,6 +25,10 @@ export default function UserMoviesPage() {
       const mapped = movies.map((m) => {
         const posterPath = m.media.tmdbPosterPath ?? m.media.posterUrl;
         const backdropPath = m.media.tmdbBackdropPath ?? m.media.backdropUrl;
+
+        const type = "movie"; // could be dynamic if you support multiple types
+        const id = m.media.mediaId ?? m.id;
+
         return {
           id: m.id,
           externalMediaId: m.media.mediaId,
@@ -32,9 +36,9 @@ export default function UserMoviesPage() {
           posterUrl: m.media.posterUrl,
           title: m.media.title,
           year: m.media.releaseDate?.split("-")[0],
-          type: "movie",
+          type,
           rating: m.rating,
-          href: `/movie/${m.media.mediaId}`,
+          href: `/collection/${type}/${id}`, // dynamically build link
         };
       });
 
