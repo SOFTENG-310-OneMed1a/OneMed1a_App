@@ -40,6 +40,7 @@
       <ul>
         <li><a href="#why-is-this-project-useful">Why is this project useful?</a></li>
         <li><a href="#built-with">Built With</a></li>
+        <li><a href="#apis-used">APIs Used</a></li>
       </ul>
     </li>
     <li>
@@ -115,12 +116,31 @@ This project also supports the SOFTENG 310 learning outcomes:
 - [![Spring Boot][SpringBoot]][SpringBoot-url]
 - [![PostgreSQL][PostgreSQL]][PostgreSQL-url]
 
-#### APIs:
+---
 
-- [![TMDB][TMDB]][TMDB-url] TMDB (movies & TV shows, posters/backdrops)
-- [![Google Books][GoogleBooks]][GoogleBooks-url] Google Books API (book metadata & covers)
-- [![Spotify][Spotify]][Spotify-url] Spotify Web API (music & album covers)
-- [![OpenAI][OpenAI]][OpenAI-url] OpenAI (cross-media recommendation)
+## APIs Used
+
+[![TMDB][TMDB]][TMDB-url]
+[![Google Books][GoogleBooks]][GoogleBooks-url]
+[![Spotify][Spotify]][Spotify-url]
+[![OpenAI][OpenAI]][OpenAI-url]
+
+Our system integrates with external APIs to provide rich metadata, covers, and media recommendations:
+
+- 🎬 **TMDB API** — for Movies & TV Shows metadata and poster/backdrop images
+- 📚 **Google Books API** — for Book metadata and cover images
+- 🎵 **Spotify Web API** — for Music metadata and album covers
+- 🤖 **OpenAI API** — for generating cross-media recommendation insights
+
+### API Key Configuration
+
+- **Frontend (Next.js)**: Keys are stored in `.env.local`
+- **Backend (Spring Boot)**: Keys are configured in `application.properties`
+
+> ⚠️ API keys should never be committed to Git. Use `.env.local` (ignored by default) and `application.properties` (with example templates provided).
+
+Find more information on how to set up configuration files in the <a href="#configuration">Configuration</a> section.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
