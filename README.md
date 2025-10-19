@@ -15,7 +15,7 @@
     <img width="334" height="90" alt="image" src="onemed1a-frontend/public/OneMediaLogo(README).png" />
   </a>
 
-  <h3 align="center">Plateful</h3>
+  <h3 align="center"></h3>
 
   <p align="center">
     OneMedia is your personalised hub for movies, books, TV shows, music, and podcasts—powered by recommendations and social discovery.
@@ -254,7 +254,7 @@ docker compose up -d      # Restart containers in background
 - [ ] **Backend test fixes** and expanded coverage
 - [ ] **Bug fixes & performance improvements** from Assignment 1
 
-See the [open issues](https://github.com/UOA-DCML/se310-plateful/issues) for a complete list of proposed features and known issues.
+See the [open issues](https://github.com/SOFTENG-310-OneMed1a/OneMed1a_App/issues) for a complete list of proposed features and known issues.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -273,8 +273,8 @@ Don't forget to give the project a star! Thanks again!
 
 ### Top contributors:
 
-<a href="https://github.com/UOA-DCML/se310-plateful/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=UOA-DCML/se310-plateful" alt="contrib.rocks image" />
+<a href="https://github.com/SOFTENG-310-OneMed1a/OneMed1a_App/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=SOFTENG-310-OneMed1a/OneMed1a_App" alt="contrib.rocks image" />
 </a>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -321,7 +321,7 @@ See the LICENSE file for details.
 
 ## Acknowledgments
 
-- [Best-README_Template](https://github.com/UOA-DCML/se310-plateful?tab=readme-ov-file)
+- [Best-README_Template](https://github.com/othneildrew/Best-README-Template)
 - Kelly Blincoe the GOAT!!! 🐐
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -331,16 +331,16 @@ See the LICENSE file for details.
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/UOA-DCML/se310-plateful.svg?style=for-the-badge
-[contributors-url]: https://github.com/UOA-DCML/se310-plateful/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/UOA-DCML/se310-plateful.svg?style=for-the-badge
-[forks-url]: https://github.com/UOA-DCML/se310-plateful/network/members
-[stars-shield]: https://img.shields.io/github/stars/UOA-DCML/se310-plateful.svg?style=for-the-badge
-[stars-url]: https://github.com/UOA-DCML/se310-plateful/stargazers
-[issues-shield]: https://img.shields.io/github/issues/UOA-DCML/se310-plateful.svg?style=for-the-badge
-[issues-url]: https://github.com/UOA-DCML/se310-plateful/issues
-[license-shield]: https://img.shields.io/github/license/UOA-DCML/se310-plateful.svg?style=for-the-badge
-[license-url]: https://github.com/UOA-DCML/se310-plateful/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/SOFTENG-310-OneMed1a/OneMed1a_App.svg?style=for-the-badge
+[contributors-url]: https://github.com/SOFTENG-310-OneMed1a/OneMed1a_App/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/SOFTENG-310-OneMed1a/OneMed1a_App.svg?style=for-the-badge
+[forks-url]: https://github.com/SOFTENG-310-OneMed1a/OneMed1a_App/network/members
+[stars-shield]: https://img.shields.io/github/stars/SOFTENG-310-OneMed1a/OneMed1a_App.svg?style=for-the-badge
+[stars-url]: https://github.com/SOFTENG-310-OneMed1a/OneMed1a_App/stargazers
+[issues-shield]: https://img.shields.io/github/issues/SOFTENG-310-OneMed1a/OneMed1a_App.svg?style=for-the-badge
+[issues-url]: https://github.com/SOFTENG-310-OneMed1a/OneMed1a_Appissues
+[license-shield]: https://img.shields.io/github/license/SOFTENG-310-OneMed1a/OneMed1a_App.svg?style=for-the-badge
+[license-url]: https://github.com/SOFTENG-310-OneMed1a/OneMed1a_App/blob/master/LICENSE.txt
 [product-screenshot]: images/screenshot.png
 [SpringBoot]: https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white
 [SpringBoot-url]: https://spring.io/projects/spring-boot
