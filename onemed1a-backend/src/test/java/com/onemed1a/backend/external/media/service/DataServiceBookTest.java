@@ -1,10 +1,10 @@
 package com.onemed1a.backend.external.media.service;
 
-import com.onemed1a.backend.external.media.responses.books.GoogleBooksResponse;
-import com.onemed1a.backend.external.media.responses.books.GoogleBooksResponseDTO;
-import com.onemed1a.backend.external.media.responses.books.VolumeInfo;
-import com.onemed1a.backend.media.MediaData;
-import com.onemed1a.backend.media.MediaDataRepository;
+import com.onemed1a.backend.dto.media.books.GoogleBooksResponse;
+import com.onemed1a.backend.dto.media.books.GoogleBooksResponseDTO;
+import com.onemed1a.backend.dto.media.books.VolumeInfo;
+import com.onemed1a.backend.repository.MediaDataRepository;
+import com.onemed1a.backend.service.DataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.*;

@@ -3,9 +3,9 @@ package com.onemed1a.backend.media.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.onemed1a.backend.media.MediaData;
-import com.onemed1a.backend.media.MediaDataRepository;
-import com.onemed1a.backend.media.MediaDataService;
+import com.onemed1a.backend.model.MediaData;
+import com.onemed1a.backend.repository.MediaDataRepository;
+import com.onemed1a.backend.service.MediaDataService;
 
 import java.util.List;
 import java.util.Optional;

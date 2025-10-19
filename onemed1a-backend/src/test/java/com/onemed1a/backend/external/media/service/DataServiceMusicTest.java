@@ -1,7 +1,8 @@
 package com.onemed1a.backend.external.media.service;
 
-import com.onemed1a.backend.external.media.responses.music.*;
-import com.onemed1a.backend.media.MediaDataRepository;
+import com.onemed1a.backend.dto.media.music.*;
+import com.onemed1a.backend.repository.MediaDataRepository;
+import com.onemed1a.backend.service.DataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.*;

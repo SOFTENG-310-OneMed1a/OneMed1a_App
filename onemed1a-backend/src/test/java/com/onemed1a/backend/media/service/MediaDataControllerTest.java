@@ -4,9 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.onemed1a.backend.media.MediaData;
-import com.onemed1a.backend.media.MediaDataController;
-import com.onemed1a.backend.media.MediaDataService;
+import com.onemed1a.backend.model.MediaData;
+import com.onemed1a.backend.controller.MediaDataController;
+import com.onemed1a.backend.service.MediaDataService;
 
 import java.util.List;
 import java.util.Optional;

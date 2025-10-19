@@ -1,7 +1,7 @@
 services:
   db:
     container_name: postgres-spring-boot
-    image: postgres:latest
+    image: postgres:17
     environment:
       POSTGRES_USER: leochu
       POSTGRES_PASSWORD: password

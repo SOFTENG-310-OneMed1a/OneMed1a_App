@@ -1,9 +1,9 @@
 package com.onemed1a.backend.external.media.service;
 
-import com.onemed1a.backend.external.media.responses.tv.TmdbTVResponse;
-import com.onemed1a.backend.external.media.responses.tv.TmdbTVResponseDTO;
-import com.onemed1a.backend.media.MediaData;
-import com.onemed1a.backend.media.MediaDataRepository;
+import com.onemed1a.backend.dto.media.tv.TmdbTVResponse;
+import com.onemed1a.backend.dto.media.tv.TmdbTVResponseDTO;
+import com.onemed1a.backend.repository.MediaDataRepository;
+import com.onemed1a.backend.service.DataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.*;

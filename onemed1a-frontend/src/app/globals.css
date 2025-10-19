@@ -20,3 +20,18 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+@keyframes pump {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.animate-pump {
+  animation: pump 1.5s ease-in-out infinite;
+}

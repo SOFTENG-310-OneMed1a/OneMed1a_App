@@ -1,13 +1,13 @@
 package com.onemed1a.backend.media.user.status;
 
-import com.onemed1a.backend.media.MediaData;
-import com.onemed1a.backend.media.MediaDataRepository;
-import com.onemed1a.backend.user.User;
-import com.onemed1a.backend.user.UserRepository;
-import com.onemed1a.backend.usermediastatus.UserMediaStatus;
-import com.onemed1a.backend.usermediastatus.UserMediaStatusRepository;
-import com.onemed1a.backend.usermediastatus.UserMediaStatusService;
-import com.onemed1a.backend.usermediastatus.dto.UserMediaStatusDTO;
+import com.onemed1a.backend.model.MediaData;
+import com.onemed1a.backend.repository.MediaDataRepository;
+import com.onemed1a.backend.model.User;
+import com.onemed1a.backend.repository.UserRepository;
+import com.onemed1a.backend.model.UserMediaStatus;
+import com.onemed1a.backend.repository.UserMediaStatusRepository;
+import com.onemed1a.backend.service.UserMediaStatusService;
+import com.onemed1a.backend.dto.UserMediaStatusDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.onemed1a.backend.media.MediaData.MediaType.MOVIE;
-import static com.onemed1a.backend.media.MediaData.MediaType.TV;
-import static com.onemed1a.backend.usermediastatus.UserMediaStatus.Status.*;
+import static com.onemed1a.backend.model.MediaData.MediaType.MOVIE;
+import static com.onemed1a.backend.model.MediaData.MediaType.TV;
+import static com.onemed1a.backend.model.UserMediaStatus.Status.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;

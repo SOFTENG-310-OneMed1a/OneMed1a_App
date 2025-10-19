@@ -1,19 +1,15 @@
 package com.onemed1a.backend.config;
 
-import com.onemed1a.backend.media.MediaDataRepository;
-import com.onemed1a.backend.user.User;
-import com.onemed1a.backend.user.UserRepository;
-import com.onemed1a.backend.usermediastatus.UserMediaStatus;
-import com.onemed1a.backend.usermediastatus.UserMediaStatusRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.onemed1a.backend.repository.MediaDataRepository;
+import com.onemed1a.backend.model.User;
+import com.onemed1a.backend.repository.UserRepository;
+import com.onemed1a.backend.repository.UserMediaStatusRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Configuration
 public class SeedDataConfig {

@@ -4,11 +4,14 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.onemed1a.backend.model.User;
+import com.onemed1a.backend.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import com.onemed1a.backend.user.User.Gender;
+import com.onemed1a.backend.model.User.Gender;
 
 @DataJpaTest
 class UserRepositoryTest {
@@ -22,6 +25,7 @@ class UserRepositoryTest {
                 .firstName("Alice")
                 .lastName("Ng")
                 .email("alice@example.com")
+                .password("password123")
                 .gender(Gender.UNSPECIFIED)
                 .dateOfBirth(LocalDate.of(2001, 7, 15))
                 .active(true)
@@ -44,6 +48,7 @@ class UserRepositoryTest {
         User u1 = User.builder()
                 .firstName("A").lastName("B")
                 .email("unique@example.com")
+                .password("pw1")
                 .gender(Gender.UNSPECIFIED)
                 .active(true)
                 .build();
@@ -52,6 +57,7 @@ class UserRepositoryTest {
         User u2 = User.builder()
                 .firstName("C").lastName("D")
                 .email("unique@example.com") // duplicate
+                .password("pw2")
                 .gender(Gender.UNSPECIFIED)
                 .active(true)
                 .build();

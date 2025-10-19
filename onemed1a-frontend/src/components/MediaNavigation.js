@@ -4,6 +4,14 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
+/**
+ * MediaNavigation component for navigating between media tabs: Movies, TV, Books, Audio.
+ * Highlights the active tab based on the current pathname.
+ * Preserves the search query parameter 'q' when switching tabs.
+ *
+ * Used in the navigation bar of the application.
+ * @returns
+ */
 export default function MediaNavigation() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -24,17 +32,22 @@ export default function MediaNavigation() {
   }, [searchParams]);
 
   return (
-    <nav className="flex items-center justify-center" role="navigation" aria-label="Media categories">
-      <div className="flex flex-wrap justify-center gap-3">
+    <nav
+      className="flex items-center justify-center"
+      role="navigation"
+      aria-label="Media categories"
+    >
+      <div className="flex flex-col items-center lg:flex-row lg:justify-center gap-1.5">
         {tabs.map((t) => {
+          // Determine if this tab is active based on the current pathname
           const active = pathname?.startsWith(t.href);
           return (
             <Link
               key={t.name}
               href={t.href + (q ? `?q=${encodeURIComponent(q)}` : "")}
               aria-current={active ? "page" : undefined}
-              className={`px-4 py-1.5 text-sm font-semibold uppercase tracking-wide rounded-full transition-colors
-                ${active ? "bg-blue-600 text-white" : "bg-red-600 text-white hover:bg-red-700"}`}
+              className={`px-4 py-1.5 text-sm font-semibold uppercase tracking-wide transition-colors
+              ${active ? "text-red-600" : "text-black hover:text-red-600"}`}
             >
               {t.name}
             </Link>

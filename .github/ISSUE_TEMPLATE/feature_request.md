@@ -34,3 +34,8 @@ Provide any extra details that could help clarify the request. This may include:
 - Screenshots
 - References to similar features in other products
 - Links to related documentation or discussions
+
+### Acceptance Criteria
+List the conditions that must be met for this feature to be considered complete.  
+- [ ] Acceptance criteria defined
+

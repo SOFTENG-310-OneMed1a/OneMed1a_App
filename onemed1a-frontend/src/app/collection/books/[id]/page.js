@@ -1,10 +1,12 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
 import StarRating from "@/app/media-details-components/StarRating";
+import ReviewSection from "@/app/media-details-components/ReviewSection";
 import CollectionDropdown from "@/app/media-details-components/CollectionDropdown";
 import Divider from "@/app/media-details-components/Divider";
+import SaveButton from "@/app/media-details-components/SaveButton";
 import { getMediaById } from "@/api/mediaClient";
 import { cookies } from "next/headers";
 import { getStatus } from "@/api/mediaAPI";
@@ -12,6 +14,7 @@ import { getStatus } from "@/api/mediaAPI";
 // --- Helpers ---------------------------------------------------------------
 
 const GOOGLE_BOOKS_BASE = "https://books.google.com";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
 /** Is already a full URL (http/https)? */
 function isFullUrl(v) {
@@ -37,7 +40,11 @@ function normalizeBookUrl(path) {
  * Books often only have a single cover URL; backdrop may be absent.
  */
 function pickCover(posterPath, backdropPath) {
-  return normalizeBookUrl(posterPath) || normalizeBookUrl(backdropPath) || "/next.svg";
+  return (
+    normalizeBookUrl(posterPath) ||
+    normalizeBookUrl(backdropPath) ||
+    "/next.svg"
+  );
 }
 
 // --- Data fetchers ---------------------------------------------------------
@@ -65,7 +72,25 @@ async function getMediaStatus(userId, mediaId) {
 
 export default async function BookPage({ params }) {
   const { id } = await params; // await dynamic API
-  const userId = (await cookies()).get("userId")?.value; // await cookies()
+  const cookieStore = await cookies(); // Add await here
+  const tokenCookie = cookieStore.get("access_token"); // Remove await from this line
+
+  if (!tokenCookie) {
+    redirect("/login");
+  }
+
+  const cookieHeader = `access_token=${tokenCookie.value}`;
+
+  // Get user profile to get userId - use full URL
+  const profile = await fetch(`${API_BASE}/api/v1/getprofile`, {
+    headers: { cookie: cookieHeader },
+  }).then((res) => (res.ok ? res.json() : null));
+
+  if (!profile?.id) {
+    redirect("/login");
+  }
+
+  const userId = profile.id;
 
   const book = await getBook(id);
   if (!book) notFound();
@@ -109,7 +134,9 @@ export default async function BookPage({ params }) {
           <div className="flex-1">
             {/* Title and basic info */}
             <div className="mb-6">
-              <h1 className="text-4xl font-bold mb-2 text-gray-900">{book.title}</h1>
+              <h1 className="text-4xl font-bold mb-2 text-gray-900">
+                {book.title}
+              </h1>
 
               <div className="text-gray-600 mb-3">
                 {/* Authors */}
@@ -120,7 +147,9 @@ export default async function BookPage({ params }) {
                 {/* Meta row */}
                 <div className="flex flex-wrap items-center gap-4 text-sm">
                   {book.releaseDate && <span>{book.releaseDate}</span>}
-                  {book.pageCount != null && <span>• {book.pageCount} pages</span>}
+                  {book.pageCount != null && (
+                    <span>• {book.pageCount} pages</span>
+                  )}
                   {book.publisher && <span>• Publisher: {book.publisher}</span>}
                   {book.isbn && <span>• ISBN: {book.isbn}</span>}
                 </div>
@@ -131,7 +160,7 @@ export default async function BookPage({ params }) {
                 {(book.genres || []).map((genre) => (
                   <span
                     key={genre}
-                    className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium"
+                    className="bg-black text-white px-3 py-1 rounded text-sm font-medium"
                   >
                     {genre}
                   </span>
@@ -145,6 +174,17 @@ export default async function BookPage({ params }) {
                 {book.description || "No synopsis available."}
               </p>
             </div>
+
+            {/* Save button */}
+            <div className="mt-6 flex">
+              <SaveButton
+                userId={userId}
+                mediaId={book.mediaId}
+                mediaType="Books"
+                statusId={result?.id}
+                saved={result !== null} // If result exists, it's saved
+              />
+            </div>
           </div>
         </div>
 
@@ -157,7 +197,25 @@ export default async function BookPage({ params }) {
 
         <Divider />
 
-        <StarRating value={5} />
+        <StarRating
+          userId={userId}
+          mediaId={book.mediaId}
+          value={result && result.rating ? result.rating : 0}
+          updatedAt={result && result.updatedAt}
+          statusId={result && result.id}
+        />
+
+        <Divider />
+
+        <ReviewSection
+          userId={userId}
+          mediaId={book.mediaId}
+          mediaType={book.type}
+          initialReviewText={result?.reviewText || ""}
+          statusId={result?.id}
+          currentStatus={result?.status}
+          currentRating={result?.rating}
+        />
 
         <Divider />
 

@@ -1,9 +1,11 @@
-import { notFound } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
 import StarRating from "@/app/media-details-components/StarRating";
+import ReviewSection from "@/app/media-details-components/ReviewSection";
 import Divider from "@/app/media-details-components/Divider";
+import SaveButton from "@/app/media-details-components/SaveButton";
 import { getMediaById } from "@/api/mediaClient";
 import { cookies } from "next/headers";
 import CollectionDropdown from "@/app/media-details-components/CollectionDropdown";
@@ -12,6 +14,7 @@ import { getStatus } from "@/api/mediaAPI";
 // --- Image helpers ---------------------------------------------------------
 
 const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
 function isFullUrl(v) {
   return typeof v === "string" && /^https?:\/\//i.test(v);
@@ -22,8 +25,17 @@ function withSize(path, size) {
   const p = String(path).startsWith("/") ? String(path) : `/${path}`;
   return `${TMDB_IMG_BASE}${size}${p}`;
 }
-function pickCover(posterPath, backdropPath, posterSize = "w500", backdropSize = "w780") {
-  return withSize(posterPath, posterSize) || withSize(backdropPath, backdropSize) || "/next.svg";
+function pickCover(
+  posterPath,
+  backdropPath,
+  posterSize = "w500",
+  backdropSize = "w780"
+) {
+  return (
+    withSize(posterPath, posterSize) ||
+    withSize(backdropPath, backdropSize) ||
+    "/next.svg"
+  );
 }
 
 // --- Data fetchers ---------------------------------------------------------
@@ -44,10 +56,29 @@ async function getMediaStatus(userId, mediaId) {
     return null; // Not in collection
   }
 }
+// --- Page ------------------------------------------------------------------
 
 export default async function TvShowPage({ params }) {
-  const { id } = await params;
-  const userId = (await cookies()).get("userId")?.value;
+  const { id } = await params; // await dynamic API
+  const cookieStore = await cookies(); // Add await here
+  const tokenCookie = cookieStore.get("access_token"); // Remove await from this line
+
+  if (!tokenCookie) {
+    redirect("/login");
+  }
+
+  const cookieHeader = `access_token=${tokenCookie.value}`;
+
+  // Get user profile to get userId - use full URL
+  const profile = await fetch(`${API_BASE}/api/v1/getprofile`, {
+    headers: { cookie: cookieHeader },
+  }).then((res) => (res.ok ? res.json() : null));
+
+  if (!profile?.id) {
+    redirect("/login");
+  }
+
+  const userId = profile.id;
 
   const show = await getTvShow(id);
   if (!show) notFound();
@@ -65,7 +96,10 @@ export default async function TvShowPage({ params }) {
       <div className="mx-auto w-full max-w-6xl px-4 pb-20">
         {/* Back button */}
         <div className="pt-8 mb-8">
-          <Link href="/tv" className="inline-flex items-center gap-2 text-gray-800 hover:text-gray-600">
+          <Link
+            href="/tv"
+            className="inline-flex items-center gap-2 text-gray-800 hover:text-gray-600"
+          >
             <span className="text-2xl">←</span>
             <span className="sr-only">Back to TV</span>
           </Link>
@@ -85,14 +119,20 @@ export default async function TvShowPage({ params }) {
           {/* Content */}
           <div className="flex-1">
             <div className="mb-6">
-              <h1 className="text-4xl font-bold mb-2 text-gray-900">{show.title}</h1>
+              <h1 className="text-4xl font-bold mb-2 text-gray-900">
+                {show.title}
+              </h1>
               <div className="text-gray-600 mb-3">
                 <div className="flex flex-wrap items-center gap-4 text-sm">
                   {show.firstAirYear && <span>{show.firstAirYear}</span>}
                   {show.seasons != null && (
-                    <span>• {show.seasons} season{show.seasons === 1 ? "" : "s"}</span>
+                    <span>
+                      • {show.seasons} season{show.seasons === 1 ? "" : "s"}
+                    </span>
                   )}
-                  {show.episodes != null && <span>• {show.episodes} episodes</span>}
+                  {show.episodes != null && (
+                    <span>• {show.episodes} episodes</span>
+                  )}
                   {show.network && <span>• Network: {show.network}</span>}
                 </div>
               </div>
@@ -110,7 +150,10 @@ export default async function TvShowPage({ params }) {
               {/* Genre pills */}
               <div className="flex flex-wrap gap-2 mb-6">
                 {(show.genres || []).map((genre) => (
-                  <span key={genre} className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium">
+                  <span
+                    key={genre}
+                    className="bg-black text-white px-3 py-1 rounded text-sm font-medium"
+                  >
                     {genre}
                   </span>
                 ))}
@@ -122,6 +165,17 @@ export default async function TvShowPage({ params }) {
               <p className="text-gray-700 leading-relaxed">
                 {show.description || "No synopsis available."}
               </p>
+            </div>
+
+            {/* Save button */}
+            <div className="mt-6 flex">
+              <SaveButton
+                userId={userId}
+                mediaId={show.mediaId}
+                mediaType={show.type}
+                statusId={result?.id}
+                saved={result !== null} // If result exists, it's saved
+              />
             </div>
           </div>
         </div>
@@ -135,7 +189,25 @@ export default async function TvShowPage({ params }) {
 
         <Divider />
 
-        <StarRating value={4} />
+        <StarRating
+          userId={userId}
+          mediaId={show.mediaId}
+          value={result && result.rating ? result.rating : 0}
+          updatedAt={result && result.updatedAt}
+          statusId={result && result.id}
+        />
+
+        <Divider />
+
+        <ReviewSection
+          userId={userId}
+          mediaId={show.mediaId}
+          mediaType={show.type}
+          initialReviewText={result?.reviewText || ""}
+          statusId={result?.id}
+          currentStatus={result?.status}
+          currentRating={result?.rating}
+        />
 
         <Divider />
 

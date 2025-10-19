@@ -1,134 +1,154 @@
-import MediaGrid from "@/components/MediaGrid";
-import { getUserMediaByUserId } from "@/api/mediaAPI";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import MediaGrid from "@/components/MediaGrid";
+import {
+  normalizeTypeKey,
+  typeMap,
+  toYear,
+  pickCover,
+  fetchJSON,
+} from "@/lib/mediaUtils";
+
+/**
+ * MediaPage component for displaying user's media collection by type.
+ * Merges user media statuses with external media data.
+ */
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/";
-
-// Accept singular and plural paths
-const normalizeTypeKey = (t = "") => {
-  const key = String(t).toLowerCase();
-  if (key === "movies") return "movie";
-  if (key === "tvs" || key === "shows") return "tv";
-  if (key === "audios") return "audio";
-  if (key === "book") return "books";
-  return key;
-};
-
-// Map route key -> backend media type
-const typeMap = {
-  movie: "MOVIE",
-  movies: "MOVIE",
-  tv: "TV",
-  shows: "TV",
-  music: "MUSIC",
-  audio: "MUSIC",
-  books: "BOOKS",
-};
-
-const toYear = (dateStr) => (dateStr ? Number(String(dateStr).slice(0, 4)) : undefined);
-
-function isFullUrl(value) {
-  return typeof value === "string" && /^https?:\/\//i.test(value);
-}
-function withSize(path, size) {
-  if (!path) return null;
-  if (isFullUrl(path)) return path;
-  const p = String(path).startsWith("/") ? String(path) : `/${path}`;
-  return `${TMDB_IMG_BASE}${size}${p}`;
-}
-function pickCover(posterPath, backdropPath, posterSize = "w342", backdropSize = "w780") {
-  return withSize(posterPath, posterSize) || withSize(backdropPath, backdropSize) || "/next.svg";
-}
-
-// Fallback mappers for discover endpoints
-function mapDiscoverMovies(json) {
-  const list = Array.isArray(json?.results) ? json.results : [];
-  return list.map((m) => ({
-    id: m.id,
-    title: m.title ?? "Untitled",
-    type: "movie",
-    year: (m.release_date || "").slice(0, 4) || undefined,
-    rating: typeof m.vote_average === "number" ? m.vote_average.toFixed(1) : undefined,
-    coverUrl: pickCover(m.poster_path, m.backdrop_path),
-    href: `/collection/movie/${m.id}`,
-  }));
-}
-function mapDiscoverTV(json) {
-  const list = Array.isArray(json?.results) ? json.results : [];
-  return list.map((m) => ({
-    id: m.id,
-    title: m.name ?? "Untitled",
-    type: "tv",
-    year: (m.first_air_date || "").slice(0, 4) || undefined,
-    rating: typeof m.vote_average === "number" ? m.vote_average.toFixed(1) : undefined,
-    coverUrl: pickCover(m.poster_path, m.backdrop_path),
-    href: `/collection/tv/${m.id}`,
-  }));
-}
-
-/**
- * @param {{ params: { id: string } }} props
- */
 export default async function MediaPage({ params }) {
-  const { mediaType: rawMediaType } = params;   // no `await` here!
+  const { mediaType: rawMediaType } = await params;
   const mediaTypeKey = normalizeTypeKey(rawMediaType);
-  const wantedType = typeMap[mediaTypeKey];
 
+  // Check for user authentication
   const cookieStore = await cookies();
-  const userId = cookieStore.get("userId")?.value;
-  if (!userId) redirect("/");
+  const accessTokenCookie = cookieStore.get("access_token"); // Remove await here
 
-  let raw = [];
-  try {
-    raw = (await getUserMediaByUserId(userId)) ?? [];
-  } catch (e) {
-    console.error("Failed to load user media:", e);
+  if (!accessTokenCookie) {
+    redirect("/login");
   }
 
-  // 1) Try the user's library first
-  let items = raw
-    .filter((ums) => ums?.media?.type === wantedType)
-    .map((ums) => {
-      const m = ums.media ?? {};
-      return {
-        id: m.mediaId ?? ums.id,
-        title: m.title ?? "",
-        coverUrl: pickCover(m.posterUrl, m.backdropUrl),
-        year: toYear(m.releaseDate),
-        type: (m.type || "").toLowerCase(),
-        status: ums.status,
-        href: `/collection/${(m.type || "").toLowerCase()}/${m.mediaId ?? ums.id}`,
-      };
-    });
+  // Build cookie header for fetch
+  const cookieHeader = `access_token=${accessTokenCookie.value}`;
 
-  // 2) If empty, fallback to discover so the page always shows posters
-  if (items.length === 0 && (mediaTypeKey === "movie" || mediaTypeKey === "movies" || mediaTypeKey === "tv")) {
-    try {
-      const base = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
-      const url =
-        mediaTypeKey === "tv"
-          ? `${base}/api/discover/tv`
-          : `${base}/api/discover/movies`;
+  // Fetch user profile from backend, forwarding cookies
+  const API_BASE = process.env.API_BASE || "http://localhost:8080";
+  const res = await fetch(`${API_BASE}/api/v1/getprofile`, {
+    headers: {
+      cookie: cookieHeader,
+    },
+    cache: "no-store",
+  });
 
-      const res = await fetch(url, { cache: "no-store" });
-      if (res.ok) {
-        const data = await res.json();
-        items = mediaTypeKey === "tv" ? mapDiscoverTV(data) : mapDiscoverMovies(data);
-      } else {
-        console.error("Discover fetch failed:", res.status, await res.text());
+  if (!res.ok) {
+    redirect("/login");
+  }
+
+  const profile = await res.json();
+
+  const userId = profile?.id;
+  if (!userId) {
+    redirect("/login");
+  }
+
+  const raw = await fetchJSON(`/api/v1/usermedia/user/${userId}`);
+
+  let external = [];
+  if (["movie", "tv", "music", "books"].includes(mediaTypeKey)) {
+    const path = `/api/v1/externalMediaData/${
+      mediaTypeKey === "movie" ? "movies" : mediaTypeKey
+    }`;
+    external = await fetchJSON(path);
+  }
+
+  // Build external items
+  const externalMap = new Map();
+  const aliasMap = new Map();
+  const externalItems = external.map((m) => {
+    const idKey = m.mediaId || m.externalMediaId || m.id;
+    const canonical = String(idKey);
+    const item = {
+      id: canonical,
+      title: m.title ?? "Untitled",
+      type: (m.type || "").toLowerCase(),
+      year: (m.releaseDate || "").slice(0, 4) || undefined,
+      rating: m.rating ?? undefined,
+      coverUrl: pickCover(m.posterUrl, m.backdropUrl),
+      href: `/collection/${(m.type || "").toLowerCase()}/${canonical}`,
+      _raw: m,
+    };
+    externalMap.set(canonical, item);
+    if (m.externalMediaId) aliasMap.set(String(m.externalMediaId), canonical);
+    if (m.mediaId) aliasMap.set(String(m.mediaId), canonical);
+    return item;
+  });
+
+  // Merge tracked user media statuses - FIX: use mediaTypeKey instead of wantedType
+  const itemsMap = new Map();
+  for (const it of externalItems) itemsMap.set(String(it.id), { ...it });
+
+  for (const ums of raw.filter((ums) => ums?.media?.type === mediaTypeKey)) {
+    // ← FIXED THIS LINE
+    const m = ums.media ?? {};
+    const umsInternal = m.mediaId ? String(m.mediaId) : null;
+    const umsExternal = m.externalMediaId ? String(m.externalMediaId) : null;
+
+    let canonical =
+      umsInternal && itemsMap.has(umsInternal)
+        ? umsInternal
+        : umsExternal && aliasMap.has(umsExternal)
+        ? aliasMap.get(umsExternal)
+        : umsExternal && itemsMap.has(umsExternal)
+        ? umsExternal
+        : umsInternal && aliasMap.has(umsInternal)
+        ? aliasMap.get(umsInternal)
+        : null;
+
+    if (!canonical) {
+      // fallback by title+year
+      const titleKey = (m.title || "").trim().toLowerCase();
+      const yearKey = toYear(m.releaseDate);
+      if (titleKey) {
+        for (const [extId, extItem] of externalMap.entries()) {
+          const extTitle = (extItem.title || "").trim().toLowerCase();
+          const extYear = extItem.year;
+          if (
+            extTitle === titleKey &&
+            (!yearKey || String(extYear) === String(yearKey))
+          ) {
+            canonical = extId;
+            break;
+          }
+        }
       }
-    } catch (e) {
-      console.error("Discover fetch error:", e);
     }
+
+    if (!canonical)
+      canonical = String(m.mediaId || m.externalMediaId || ums.id);
+
+    const base = itemsMap.get(canonical) || externalMap.get(canonical) || {};
+    itemsMap.set(canonical, {
+      ...base,
+      status: ums.status,
+      rating: ums.rating ?? base.rating,
+      href: `/collection/${(m.type || "").toLowerCase()}/${
+        m.mediaId ?? ums.id
+      }`,
+    });
+    if (umsExternal) aliasMap.set(umsExternal, canonical);
+    if (umsInternal) aliasMap.set(umsInternal, canonical);
   }
 
-  // Optional: log a few URLs to verify
-  // console.log("cover samples:", items.slice(0, 3).map(i => i.coverUrl));
+  // Final items array to render
+  const items = [
+    ...externalItems.map((it) => itemsMap.get(it.id)),
+    ...Array.from(itemsMap.entries())
+      .filter(([k]) => !externalMap.has(k))
+      .map(([_, v]) => v),
+  ];
 
+  // Populate media grid display with media items
   return (
     <div className="p-4">
       <MediaGrid items={items} />
