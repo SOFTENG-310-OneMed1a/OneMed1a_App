@@ -116,13 +116,17 @@ public class UserMediaStatusService {
      * @return a boolean to see if it deleted the media status correctly.
      */
     public boolean delete(UUID statusId) {
-
         try {
-            userMediaStatusRepository.deleteById(statusId);
+            // Check if the item exists before deleting
+            boolean exists = userMediaStatusRepository.existsById(statusId);
+            if (exists) {
+                userMediaStatusRepository.deleteById(statusId);
+                return true; // Return true when successfully deleted
+            }
+            return false; // Return false if item doesn't exist
         } catch (RuntimeException e) {
             throw new IllegalArgumentException(e);
         }
-        return false;
     }
 
     /**

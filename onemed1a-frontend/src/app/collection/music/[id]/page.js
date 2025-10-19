@@ -160,6 +160,8 @@ export default async function MusicPage({ params }) {
                 userId={userId}
                 mediaId={album.mediaId}
                 mediaType="music"
+                statusId={result?.id}
+                saved={result !== null} // If result exists, it's saved
               />
             </div>
           </div>

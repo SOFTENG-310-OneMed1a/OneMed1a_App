@@ -161,6 +161,8 @@ export default async function BookPage({ params }) {
                 userId={userId}
                 mediaId={book.mediaId}
                 mediaType="Books"
+                statusId={result?.id}
+                saved={result !== null} // If result exists, it's saved
               />
             </div>
           </div>

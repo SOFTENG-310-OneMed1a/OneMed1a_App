@@ -152,6 +152,8 @@ export default async function TvShowPage({ params }) {
                 userId={userId}
                 mediaId={show.mediaId}
                 mediaType={show.type}
+                statusId={result?.id}
+                saved={result !== null} // If result exists, it's saved
               />
             </div>
           </div>

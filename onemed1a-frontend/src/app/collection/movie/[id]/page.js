@@ -159,6 +159,8 @@ export default async function MoviePage({ params }) {
                 userId={userId}
                 mediaId={movie.mediaId}
                 mediaType={"movie"}
+                statusId={result?.id}
+                saved={result !== null} // If result exists, it's saved
               />
             </div>
           </div>

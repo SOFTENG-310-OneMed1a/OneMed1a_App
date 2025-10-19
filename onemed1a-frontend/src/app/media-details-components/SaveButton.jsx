@@ -1,84 +1,98 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
-export default function SaveButton({ userId, mediaId, mediaType = "movie" }) {
+export default function SaveButton({
+  userId,
+  mediaId, // The actual media ID (TMDB, etc.) - for saving
+  statusId, // The user media status ID - for deletion
+  mediaType = "movie",
+  onRemove,
+  saved: initialSaved = false,
+}) {
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const buttonRef = useRef(null);
-  const [buttonWidth, setButtonWidth] = useState("auto");
+  const [saved, setSaved] = useState(initialSaved);
 
-  // Precompute the longest text for consistent width
-  const longestText = `Save to My ${
-    mediaType.charAt(0).toUpperCase() + mediaType.slice(1)
-  }`;
-
+  // Sync with initialSaved prop when it changes
   useEffect(() => {
-    if (buttonRef.current) {
-      // Temporarily set the button text to the longest text
-      const tempSpan = document.createElement("span");
-      tempSpan.style.visibility = "hidden";
-      tempSpan.style.position = "absolute";
-      tempSpan.style.whiteSpace = "nowrap";
-      tempSpan.className = buttonRef.current.className;
-      tempSpan.innerText = longestText;
-      document.body.appendChild(tempSpan);
+    setSaved(initialSaved);
+  }, [initialSaved]);
 
-      const width = tempSpan.offsetWidth + 32; // Add padding buffer
-      setButtonWidth(width);
-
-      document.body.removeChild(tempSpan);
-    }
-  }, [longestText]);
-
-  async function handleSave() {
+  async function handleToggle() {
     setSaving(true);
     try {
-      const payload = {
-        userId,
-        mediaId,
-        type: mediaType.toUpperCase(),
-        status: "PLAN_TO_WATCH",
-      };
+      if (!saved) {
+        // Save logic
+        const payload = {
+          userId,
+          mediaId, // This is the actual media ID
+          type: mediaType.toUpperCase(),
+          status: "PLAN_TO_WATCH",
+        };
 
-      console.log("Saving payload:", payload);
+        console.log("Saving media:", payload);
 
-      const res = await fetch(`${API_BASE}/api/v1/usermedia`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+        const res = await fetch(`${API_BASE}/api/v1/usermedia`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
 
-      if (res.ok) {
-        setSaved(true);
+        if (res.ok) {
+          const savedItem = await res.json();
+          console.log("Save successful:", savedItem);
+          setSaved(true);
+        } else {
+          const err = await res.text();
+          console.error("Save failed", res.status, err);
+        }
       } else {
-        const err = await res.text();
-        console.error("Save failed", res.status, err);
+        // Remove from list - MUST use statusId for deletion
+        console.log("Deleting with statusId:", statusId);
+
+        if (!statusId) {
+          console.error("No statusId provided for deletion");
+          return;
+        }
+
+        const res = await fetch(`${API_BASE}/api/v1/usermedia/${statusId}`, {
+          method: "DELETE",
+        });
+
+        if (res.ok) {
+          console.log("Delete successful");
+          setSaved(false);
+          if (onRemove) onRemove(); // Call the parent's remove function
+        } else {
+          const err = await res.text();
+          console.error("Remove failed", res.status, err);
+        }
       }
     } catch (err) {
-      console.error("Error saving:", err);
+      console.error("Error in handleToggle:", err);
     } finally {
       setSaving(false);
     }
   }
 
+  // Simple button text based on state
+  const buttonText = saving
+    ? "Saving..."
+    : saved
+    ? `Remove from My ${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}`
+    : `Save to My ${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}`;
+
   return (
     <button
-      ref={buttonRef}
-      onClick={handleSave}
-      disabled={saving || saved}
-      style={{ width: buttonWidth }}
-      className="rounded-xl bg-[#F13738] text-white px-4 py-2 hover:opacity-90 mt-4"
+      onClick={handleToggle}
+      disabled={saving}
+      className={`rounded-xl text-white px-4 py-2 mt-4 transition-all min-w-[160px] ${
+        saved ? "bg-gray-600 hover:bg-gray-700" : "bg-red-600 hover:bg-red-700"
+      } disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap`}
     >
-      {saved
-        ? "Saved!"
-        : saving
-        ? "Saving..."
-        : `Save to My ${
-            mediaType.charAt(0).toUpperCase() + mediaType.slice(1)
-          }`}
+      {buttonText}
     </button>
   );
 }

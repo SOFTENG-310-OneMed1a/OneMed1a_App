@@ -52,7 +52,7 @@ public class UserMediaStatusController {
     }
 
     //Delete method to delete the status of a media item for the logged in user
-    @DeleteMapping("/{statusId}/")
+    @DeleteMapping("/{statusId}")
     public ResponseEntity<UUID> deleteUserMediaStatus(@PathVariable ("statusId") UUID statusId) {
         userMediaService.delete(statusId);
         return ResponseEntity.ok(statusId);

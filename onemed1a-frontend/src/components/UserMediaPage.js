@@ -56,6 +56,11 @@ export default function UserMediaPage({ mediaType }) {
     loadMedia();
   }, [mediaType]);
 
+  // Callback to remove an item locally after deletion
+  const handleRemove = (id) => {
+    setItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
   if (loading) return <p>Loading your {mediaType}...</p>;
   if (items.length === 0) return <p>No {mediaType} saved yet.</p>;
 
@@ -64,7 +69,7 @@ export default function UserMediaPage({ mediaType }) {
       <h1 className="text-2xl font-semibold mb-4">
         Your {mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}
       </h1>
-      <MediaGrid items={items} />
+      <MediaGrid items={items} onRemove={handleRemove} />
     </div>
   );
 }
