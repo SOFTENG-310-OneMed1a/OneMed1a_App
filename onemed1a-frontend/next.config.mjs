@@ -2,11 +2,23 @@
 const nextConfig = {
   images: {
     unoptimized: false,
-    domains: [
-      "image.tmdb.org", // TMDB
-      "books.google.com", // Google Books covers
-      "books.googleusercontent.com", // Google Books covers
-      "i.scdn.co", // Spotify
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "image.tmdb.org",
+      },
+      {
+        protocol: "https",
+        hostname: "books.google.com",
+      },
+      {
+        protocol: "https",
+        hostname: "books.googleusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "i.scdn.co",
+      },
     ],
   },
 };

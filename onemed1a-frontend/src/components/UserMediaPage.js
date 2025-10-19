@@ -35,18 +35,29 @@ export default async function UserMediaPage({ mediaType }) {
   );
 
   const items = rawMedia.map((m) => {
-    const posterPath =
-      m.media.tmdbPosterPath || m.media.posterUrl || m.media.coverUrl;
-    const normalizedPoster = posterPath?.startsWith("http")
-      ? posterPath
-      : `https://image.tmdb.org/t/p/w342${posterPath}`;
+    const tmdbBase = "https://image.tmdb.org/t/p/";
 
-    const backdropPath = m.media.tmdbBackdropPath;
+    const posterPath =
+      m.media.tmdbPosterPath ?? m.media.posterUrl ?? m.media.coverUrl ?? null;
+
+    const backdropPath =
+      m.media.tmdbBackdropPath ?? m.media.backdropUrl ?? null;
+
+    // Normalize both poster and backdrop
+    const normalize = (path, size) => {
+      if (!path) return null;
+      if (path.startsWith("http")) return path;
+      if (path.startsWith("/")) return `${tmdbBase}${size}${path}`;
+      return `${tmdbBase}${size}/${path}`;
+    };
+
+    const normalizedPoster = normalize(posterPath, "w342");
+    const normalizedBackdrop = normalize(backdropPath, "w780");
 
     return {
       id: m.id,
       externalMediaId: m.media.mediaId,
-      coverUrl: pickCover(normalizedPoster, backdropPath, "w342", "w780"),
+      coverUrl: pickCover(normalizedPoster, normalizedBackdrop),
       title: m.media.title,
       year: m.media.releaseDate?.split("-")[0],
       type: mediaType.toUpperCase(),
@@ -54,6 +65,8 @@ export default async function UserMediaPage({ mediaType }) {
       href: `/collection/${mediaType}/${m.media.mediaId}`,
     };
   });
+
+  console.log("Example item:", JSON.stringify(items[0], null, 2));
 
   if (items.length === 0) return <p>No {mediaType} saved yet.</p>;
 

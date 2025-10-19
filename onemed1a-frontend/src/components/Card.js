@@ -2,6 +2,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
+import Image from "next/image";
 
 /**
  * Card component to display media item information.
@@ -40,7 +41,7 @@ export default function Card({ item }) {
           )}
 
           {/* Use a plain <img> to guarantee painting in dev */}
-          <img
+          <Image
             src={src}
             alt=""
             width={400}
@@ -50,6 +51,7 @@ export default function Card({ item }) {
             }`}
             onLoad={() => setLoaded(true)}
             onError={() => setLoaded(true)}
+            loading="eager"
           />
         </div>
 
