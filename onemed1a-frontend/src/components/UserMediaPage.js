@@ -1,94 +1,60 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import MediaGrid from "@/components/MediaGrid";
 import { pickCover, fetchJSON } from "@/lib/mediaUtils";
 
-export default function UserMediaPage({ mediaType }) {
-  const [items, setItems] = useState([]);
-  const [userId, setUserId] = useState(null);
-  const [loading, setLoading] = useState(true);
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-  useEffect(() => {
-    async function loadMedia() {
-      // Get access token from cookies
-      const accessToken = document.cookie
-        .split("; ")
-        .find((c) => c.startsWith("access_token="))
-        ?.split("=")[1];
+export default async function UserMediaPage({ mediaType }) {
+  const cookieStore = await cookies();
+  const accessTokenCookie = cookieStore.get("access_token");
 
-      if (!accessToken) {
-        console.log("No access token found");
-        setLoading(false);
-        return;
-      }
+  if (!accessTokenCookie) {
+    redirect("/login");
+  }
 
-      const cookieHeader = `access_token=${accessToken}`;
+  const API_BASE = process.env.API_BASE || "http://localhost:8080";
+  const cookieHeader = `access_token=${accessTokenCookie.value}`;
 
-      try {
-        // Get user profile -> userId
-        const profile = await fetchJSON("/api/v1/getprofile", {
-          headers: { cookie: cookieHeader },
-        });
+  // Fetch profile
+  const res = await fetch(`${API_BASE}/api/v1/getprofile`, {
+    headers: { cookie: cookieHeader },
+    cache: "no-store",
+  });
 
-        if (!profile?.id) {
-          console.log("No user profile found");
-          setLoading(false);
-          return;
-        }
+  if (!res.ok) redirect("/login");
 
-        const uid = profile.id;
-        setUserId(uid);
+  const profile = await res.json();
+  const userId = profile?.id;
+  if (!userId) redirect("/login");
 
-        console.log("Loading media for user:", uid, "type:", mediaType);
+  // Fetch user-specific media
+  const rawMedia = await fetchJSON(
+    `/api/v1/usermedia/user/${userId}?type=${mediaType.toUpperCase()}`
+  );
 
-        // Fetch user media
-        const rawMedia = await fetchJSON(
-          `/api/v1/usermedia/user/${uid}?type=${mediaType.toUpperCase()}`
-        );
+  const items = rawMedia.map((m) => {
+    const posterPath =
+      m.media.tmdbPosterPath || m.media.posterUrl || m.media.coverUrl;
+    const normalizedPoster = posterPath?.startsWith("http")
+      ? posterPath
+      : `https://image.tmdb.org/t/p/w342${posterPath}`;
 
-        console.log("Raw media data:", rawMedia);
+    const backdropPath = m.media.tmdbBackdropPath;
 
-        // Map raw media to display items
-        const mapped = rawMedia.map((m) => {
-          const posterPath =
-            m.media.tmdbPosterPath ?? m.media.posterUrl ?? m.media.coverUrl;
-          const backdropPath =
-            m.media.tmdbBackdropPath ?? m.media.backdropUrl ?? m.media.coverUrl;
+    return {
+      id: m.id,
+      externalMediaId: m.media.mediaId,
+      coverUrl: pickCover(normalizedPoster, backdropPath, "w342", "w780"),
+      title: m.media.title,
+      year: m.media.releaseDate?.split("-")[0],
+      type: mediaType.toUpperCase(),
+      rating: m.rating,
+      href: `/collection/${mediaType}/${m.media.mediaId}`,
+    };
+  });
 
-          const type = mediaType.toUpperCase();
-          const id = m.media.mediaId ?? m.id;
-
-          return {
-            id: m.id, // user media status id
-            externalMediaId: m.media.mediaId, // external id
-            coverUrl: pickCover(posterPath, backdropPath, "w342", "w780"),
-            posterUrl: m.media.posterUrl,
-            title: m.media.title,
-            year: m.media.releaseDate?.split("-")[0],
-            type,
-            rating: m.rating,
-            href: `/collection/${type}/${id}`,
-          };
-        });
-
-        console.log("Mapped items:", mapped);
-        setItems(mapped);
-      } catch (error) {
-        console.error("Error loading media:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadMedia();
-  }, [mediaType]);
-
-  const handleRemove = (id) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  if (loading) return <p>Loading your {mediaType}...</p>;
   if (items.length === 0) return <p>No {mediaType} saved yet.</p>;
 
   return (
@@ -96,9 +62,7 @@ export default function UserMediaPage({ mediaType }) {
       <h1 className="text-2xl font-semibold mb-4">
         Your {mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}
       </h1>
-      {userId && (
-        <MediaGrid items={items} onRemove={handleRemove} userId={userId} />
-      )}
+      <MediaGrid items={items} userId={userId} />
     </div>
   );
 }

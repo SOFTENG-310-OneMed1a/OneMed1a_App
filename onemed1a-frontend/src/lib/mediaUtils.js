@@ -57,35 +57,34 @@ export function pickCover(
   posterPath,
   backdropPath,
   posterSize = "w342",
-  backdropSize = "w780",
-  base = TMDB_IMG_BASE
+  backdropSize = "w780"
 ) {
-  if (posterPath)
-    return isFullUrl(posterPath)
-      ? posterPath
-      : `${base}${posterSize}${
-          posterPath.startsWith("/") ? posterPath : "/" + posterPath
-        }`;
-  if (backdropPath)
-    return isFullUrl(backdropPath)
-      ? backdropPath
-      : `${base}${backdropSize}${
-          backdropPath.startsWith("/") ? backdropPath : "/" + backdropPath
-        }`;
-  return "/placeholder-movie.png";
+  const base = "https://image.tmdb.org/t/p/";
+
+  const pick = (path, size) => {
+    if (!path) return null;
+    if (path.startsWith("http")) return path; // already full URL
+    if (path.startsWith("/")) return `${base}${size}${path}`;
+    return `${base}${size}/${path}`;
+  };
+
+  return (
+    pick(posterPath, posterSize) ||
+    pick(backdropPath, backdropSize) ||
+    "/default.png"
+  );
 }
 
 /**
  * Generic JSON fetcher for backend API calls.
  */
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
-export async function fetchJSON(path, options = {}) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    cache: "no-store",
-    ...options, // <-- forward headers, method, etc.
-  });
-  if (!res.ok) {
-    throw new Error(`Fetch failed ${res.status}`);
+export async function fetchJSON(path, init) {
+  const res = await fetch(`${API_BASE}${path}`, { cache: "no-store", ...init });
+  if (!res.ok) return null;
+  try {
+    return await res.json();
+  } catch {
+    return null;
   }
-  return res.json();
 }
