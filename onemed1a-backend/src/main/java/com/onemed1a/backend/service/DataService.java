@@ -164,8 +164,11 @@ public class DataService implements InitializingBean {
      * Convert genre IDs to genre names for movies
      */
     private List<String> convertMovieGenreIdsToNames(List<Integer> genreIds) {
+        if (genreIds == null) return List.of();
         return genreIds.stream()
-            .map(id -> movieGenreMap.getOrDefault(id, "Unknown"))
+            .map(id -> movieGenreMap.isEmpty()
+                    ? String.valueOf(id)
+                    : movieGenreMap.getOrDefault(id, String.valueOf(id)))
             .toList();
     }
 
@@ -173,8 +176,11 @@ public class DataService implements InitializingBean {
      * Convert genre IDs to genre names for TV shows
      */
     private List<String> convertTvGenreIdsToNames(List<Integer> genreIds) {
+        if (genreIds == null) return List.of();
         return genreIds.stream()
-            .map(id -> tvGenreMap.getOrDefault(id, "Unknown"))
+            .map(id -> tvGenreMap.isEmpty()
+                    ? String.valueOf(id)
+                    : tvGenreMap.getOrDefault(id, String.valueOf(id)))
             .toList();
     }
 

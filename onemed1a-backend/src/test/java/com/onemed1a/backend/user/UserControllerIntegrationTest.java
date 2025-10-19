@@ -54,7 +54,7 @@ class UserControllerIntegrationTest {
                 LocalDate.of(2001, 7, 15),
                 plainPassword);
 
-        MvcResult result = mvc.perform(post("/api/v1/users")
+        MvcResult result = mvc.perform(post("/api/v1/createuser")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(body)))
                 .andExpect(status().isCreated())

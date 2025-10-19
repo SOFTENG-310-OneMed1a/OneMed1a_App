@@ -67,7 +67,7 @@ class UserServiceTest {
         UserDTO result = service.create(dto);
 
         // Assert
-        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getId()).isEqualTo(userId);
         assertThat(result.getEmail()).isEqualTo("jane@example.com");
         verify(repo).save(any(User.class));
     }

@@ -25,6 +25,7 @@ class UserRepositoryTest {
                 .firstName("Alice")
                 .lastName("Ng")
                 .email("alice@example.com")
+                .password("password123")
                 .gender(Gender.UNSPECIFIED)
                 .dateOfBirth(LocalDate.of(2001, 7, 15))
                 .active(true)
@@ -47,6 +48,7 @@ class UserRepositoryTest {
         User u1 = User.builder()
                 .firstName("A").lastName("B")
                 .email("unique@example.com")
+                .password("pw1")
                 .gender(Gender.UNSPECIFIED)
                 .active(true)
                 .build();
@@ -55,6 +57,7 @@ class UserRepositoryTest {
         User u2 = User.builder()
                 .firstName("C").lastName("D")
                 .email("unique@example.com") // duplicate
+                .password("pw2")
                 .gender(Gender.UNSPECIFIED)
                 .active(true)
                 .build();

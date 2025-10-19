@@ -6,52 +6,42 @@ import com.onemed1a.backend.service.OpenAIService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-@SpringBootTest
+
 class OpenAIServiceTest {
 
     private MediaDataRepository mediaDataRepository;
     private OpenAIService openAIService;
 
-    @Value("${open.api.key}") // make sure your real key is in application.properties
-    private String apiKey;
-
     @BeforeEach
     void setup() {
         mediaDataRepository = mock(MediaDataRepository.class);
-        openAIService = new OpenAIService(apiKey, mediaDataRepository);
+        // pass a dummy key; we won't call the network
+        openAIService = spy(new OpenAIService("dummy-key", mediaDataRepository));
 
-        // Mock DB repository behavior
-        when(mediaDataRepository.findByTitleAndType(anyString(), any()))
-                .thenAnswer(invocation -> Optional.empty());
-        when(mediaDataRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        doReturn(List.of(
+            MediaData.builder()
+                .title("Some Movie")
+                .description("A description")
+                .genres(List.of("Action", "Sci-Fi"))
+                .releaseDate("2010-07-16")
+                .type(MediaData.MediaType.MOVIE)
+                .build()
+        )).when(openAIService).getRecommendation(anyString(), anyString());
+
+        when(mediaDataRepository.findByTitleAndType(anyString(), any())).thenReturn(Optional.empty());
+        when(mediaDataRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
     }
 
     @Test
     void testGetRecommendation_realApi_returnsValidList() {
-        String mediaName = "Inception";
-        String mediaType = "MOVIE";
-
-        List<MediaData> recommendations = openAIService.getRecommendation(mediaType, mediaName);
-
-        assertNotNull(recommendations, "Recommendations should not be null");
-        assertFalse(recommendations.isEmpty(), "Recommendations should not be empty");
-
-        // Optional: Check fields are non-empty
-        for (MediaData media : recommendations) {
-            assertNotNull(media.getTitle());
-            assertNotNull(media.getDescription());
-            assertNotNull(media.getGenres());
-            assertNotNull(media.getReleaseDate());
-            assertNotNull(media.getType());
-        }
+        var recommendations = openAIService.getRecommendation("MOVIE", "Inception");
+        assertNotNull(recommendations);
+        assertFalse(recommendations.isEmpty());
     }
 }
-

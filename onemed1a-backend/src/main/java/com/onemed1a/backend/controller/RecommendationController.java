@@ -2,6 +2,7 @@ package com.onemed1a.backend.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +22,11 @@ public class RecommendationController {
     }
 
     @PostMapping("/recommendation")
-    public List<MediaData> getRecommendation(@RequestBody RecommendationRequest payload) {
-        String mediaType = payload.getMediaType();
-        String mediaName = payload.getMediaName();
-        return openAIService.getRecommendation(mediaType, mediaName);
-    }
+public ResponseEntity<List<MediaData>> getRecommendation(@RequestBody RecommendationRequest request) {
+    List<MediaData> recs = openAIService.getRecommendation(
+        request.getMediaType(),
+        request.getMediaName()
+    );
+    return ResponseEntity.ok(recs);
+}
 }
