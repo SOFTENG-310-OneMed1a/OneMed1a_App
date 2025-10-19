@@ -8,11 +8,11 @@ const nextConfig = {
         hostname: "image.tmdb.org",
       },
       {
-        protocol: "https",
+        protocol: "http",
         hostname: "books.google.com",
       },
       {
-        protocol: "https",
+        protocol: "http",
         hostname: "books.googleusercontent.com",
       },
       {
