@@ -19,10 +19,10 @@ import org.springframework.stereotype.Service;
 /**
  * Service layer for UserMedia. Implements the logic expected by the controller: - List statuses for
  * a user with optional filters + simple paging/sorting - Get one status by (userId, mediaId) -
- * Upsert (create or update) a status - Update an existing status - Delete a status Notes: - This
- * implementation loads from the repository and filters/sorts in-memory to avoid tight coupling to
- * repository query definitions while branches are diverged. - When auth is wired, pass the
- * authenticated userId into these methods.
+ * Upsert (create or update) a status - Update an existing status - Delete a status - Get counts of
+ * media items by type for a given user Notes: - This implementation loads from the repository and
+ * filters/sorts in-memory to avoid tight coupling to repository query definitions while branches
+ * are diverged. - When auth is wired, pass the authenticated userId into these methods.
  */
 @Service
 public class UserMediaStatusService {

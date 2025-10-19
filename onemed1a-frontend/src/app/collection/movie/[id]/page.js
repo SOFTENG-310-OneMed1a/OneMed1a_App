@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
@@ -6,11 +6,14 @@ import StarRating from "@/app/media-details-components/StarRating";
 import CollectionDropdown from "@/app/media-details-components/CollectionDropdown";
 import ReviewSection from "@/app/media-details-components/ReviewSection";
 import Divider from "@/app/media-details-components/Divider";
+import SaveButton from "@/app/media-details-components/SaveButton";
 import { getMediaById } from "@/api/mediaClient";
 import { cookies } from "next/headers";
 import { getStatus } from "@/api/mediaAPI";
 
+// --- Image helpers ---------------------------------------------------------
 const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
 // Helpers to build robust TMDB URLs (or pass through full URLs)
 function isFullUrl(value) {
@@ -26,9 +29,20 @@ function withSize(path, size) {
  * Poster preferred; if missing, try backdrop; else fallback to a local asset.
  * posterSize/backdropSize can be customized per placement.
  */
-function pickCover(posterPath, backdropPath, posterSize = "w500", backdropSize = "w780") {
-  return withSize(posterPath, posterSize) || withSize(backdropPath, backdropSize) || "/next.svg";
+function pickCover(
+  posterPath,
+  backdropPath,
+  posterSize = "w500",
+  backdropSize = "w780"
+) {
+  return (
+    withSize(posterPath, posterSize) ||
+    withSize(backdropPath, backdropSize) ||
+    "/next.svg"
+  );
 }
+
+// --- Data fetchers ---------------------------------------------------------
 
 async function getMovie(id) {
   try {
@@ -49,10 +63,29 @@ async function getMediaStatus(userId, mediaId) {
   }
 }
 
+// --- Page ------------------------------------------------------------------
+
 export default async function MoviePage({ params }) {
-  // ✅ Await dynamic APIs in server components
-  const { id } = await params;
-  const userId = (await cookies()).get("userId")?.value;
+  const { id } = await params; // await dynamic API
+  const cookieStore = await cookies(); // Add await here
+  const tokenCookie = cookieStore.get("access_token"); // Remove await from this line
+
+  if (!tokenCookie) {
+    redirect("/login");
+  }
+
+  const cookieHeader = `access_token=${tokenCookie.value}`;
+
+  // Get user profile to get userId - use full URL
+  const profile = await fetch(`${API_BASE}/api/v1/getprofile`, {
+    headers: { cookie: cookieHeader },
+  }).then((res) => (res.ok ? res.json() : null));
+
+  if (!profile?.id) {
+    redirect("/login");
+  }
+
+  const userId = profile.id;
 
   const movie = await getMovie(id);
   if (!movie) notFound();
@@ -61,15 +94,17 @@ export default async function MoviePage({ params }) {
 
   // Build correct, sized image URLs (handles both TMDB paths and full URLs)
   const backdropSrc = pickCover(undefined, movie.backdropUrl, "w780", "w1280"); // prefer backdrop here
-  const posterSrc = pickCover(movie.posterUrl, movie.backdropUrl, "w500", "w780"); // prefer poster for the poster slot
+  const posterSrc = pickCover(
+    movie.posterUrl,
+    movie.backdropUrl,
+    "w500",
+    "w780"
+  ); // prefer poster for the poster slot
 
   return (
     <main className="min-h-screen bg-gray-100 text-gray-900">
       {/* Background hero image */}
-      <BackgroundImage
-        src={backdropSrc}
-        alt={`${movie.title} backdrop`}
-      />
+      <BackgroundImage src={backdropSrc} alt={`${movie.title} backdrop`} />
 
       <div className="mx-auto w-full max-w-6xl px-4 pb-20">
         {/* Back button */}
@@ -98,9 +133,13 @@ export default async function MoviePage({ params }) {
           <div className="flex-1">
             {/* Title and basic info */}
             <div className="mb-6">
-              <h1 className="text-4xl font-bold mb-2 text-gray-900">{movie.title}</h1>
+              <h1 className="text-4xl font-bold mb-2 text-gray-900">
+                {movie.title}
+              </h1>
               <div className="text-gray-600 mb-3">
-                {movie.director && <div className="text-lg">{movie.director}</div>}
+                {movie.director && (
+                  <div className="text-lg">{movie.director}</div>
+                )}
                 <div className="flex items-center gap-4 text-sm">
                   {movie.runtime && <span>{movie.runtime}</span>}
                   {movie.releaseDate && <span>• {movie.releaseDate}</span>}
@@ -123,7 +162,7 @@ export default async function MoviePage({ params }) {
                 {(movie.genres || []).map((genre) => (
                   <span
                     key={genre}
-                    className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium"
+                    className="bg-black text-white px-3 py-1 rounded text-sm font-medium"
                   >
                     {genre}
                   </span>
@@ -136,6 +175,17 @@ export default async function MoviePage({ params }) {
               <p className="text-gray-700 leading-relaxed">
                 {movie.description || "No synopsis available."}
               </p>
+            </div>
+
+            {/* Save button */}
+            <div className="mt-6 flex">
+              <SaveButton
+                userId={userId}
+                mediaId={movie.mediaId}
+                mediaType={"movie"}
+                statusId={result?.id}
+                saved={result != null} // If result exists, it's saved
+              />
             </div>
           </div>
         </div>

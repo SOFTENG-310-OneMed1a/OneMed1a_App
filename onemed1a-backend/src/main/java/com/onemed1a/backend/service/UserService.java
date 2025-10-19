@@ -1,5 +1,17 @@
 package com.onemed1a.backend.service;
 
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.onemed1a.backend.dto.CreateUserDTO;
 import com.onemed1a.backend.dto.LoginRequestDTO;
 import com.onemed1a.backend.dto.UpdateUserDTO;
@@ -7,21 +19,11 @@ import com.onemed1a.backend.dto.UserDTO;
 import com.onemed1a.backend.model.User;
 import com.onemed1a.backend.repository.UserRepository;
 import com.onemed1a.backend.security.JwtTokenProvider;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.UUID;
 
 /* Service class for managing user operations such as registration, login, profile management, and deactivation. */
 @Service
