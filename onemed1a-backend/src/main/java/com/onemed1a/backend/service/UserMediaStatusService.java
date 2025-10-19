@@ -10,7 +10,9 @@ import com.onemed1a.backend.repository.MediaDataRepository;
 import com.onemed1a.backend.repository.UserMediaStatusRepository;
 import com.onemed1a.backend.repository.UserRepository;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -136,12 +138,39 @@ public class UserMediaStatusService {
    * @return a boolean to see if it deleted the media status correctly.
    */
   public boolean delete(UUID statusId) {
-
     try {
-      userMediaStatusRepository.deleteById(statusId);
+      // Check if the item exists before deleting
+      boolean exists = userMediaStatusRepository.existsById(statusId);
+      if (exists) {
+        userMediaStatusRepository.deleteById(statusId);
+        return true; // Return true when successfully deleted
+      }
+      return false; // Return false if item doesn't exist
     } catch (RuntimeException e) {
       throw new IllegalArgumentException(e);
     }
-    return false;
+  }
+
+  /**
+   * Get counts of media items by type for a given user.
+   *
+   * @param userId the user's UUID
+   * @return a map with counts for each media type (movieCount, tvCount, musicCount, booksCount)
+   */
+  public Map<String, Long> getUserMediaCountsByType(UUID userId) {
+    List<UserMediaStatus> userMedia = userMediaStatusRepository.findByUser_Id(userId);
+
+    Map<MediaData.MediaType, Long> counts =
+        userMedia.stream()
+            .collect(
+                Collectors.groupingBy(
+                    (UserMediaStatus status) -> status.getMedia().getType(),
+                    Collectors.counting()));
+
+    return Map.of(
+        "movieCount", counts.getOrDefault(MediaData.MediaType.MOVIE, 0L),
+        "tvCount", counts.getOrDefault(MediaData.MediaType.TV, 0L),
+        "musicCount", counts.getOrDefault(MediaData.MediaType.MUSIC, 0L),
+        "booksCount", counts.getOrDefault(MediaData.MediaType.BOOKS, 0L));
   }
 }
