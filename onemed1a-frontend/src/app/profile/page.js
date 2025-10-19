@@ -75,7 +75,11 @@ export default async function ProfilePage() {
     }),
   ]);
 
-  const name = profile?.name || profile?.fullName || "Your Name";
+  const name =
+    profile?.fullName ||
+    `${profile?.firstName} ${profile?.lastName}` ||
+    "Your Name";
+
   const email = profile?.email || "you@example.com";
   const joined = profile?.createdAt || profile?.joinedAt;
   const avatarUrl = profile?.avatarUrl;
@@ -119,12 +123,6 @@ export default async function ProfilePage() {
               className="inline-flex items-center rounded-xl border border-slate-300 px-4 py-2 text-sm hover:bg-slate-50 transition"
             >
               Edit profile
-            </a>
-            <a
-              href="/collection"
-              className="inline-flex items-center rounded-xl bg-black text-white px-4 py-2 text-sm hover:opacity-90 transition shadow"
-            >
-              View collection
             </a>
           </div>
         </div>
