@@ -19,8 +19,6 @@ import com.onemed1a.backend.dto.CreateUserDTO;
 import com.onemed1a.backend.dto.LoginRequestDTO;
 import com.onemed1a.backend.dto.UpdateUserDTO;
 import com.onemed1a.backend.dto.UserDTO;
-import com.onemed1a.backend.model.User;
-import com.onemed1a.backend.repository.UserRepository;
 import com.onemed1a.backend.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,7 +32,6 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
 
     // --- Public / Admin routes ---
     
@@ -58,11 +55,6 @@ public class UserController {
     @GetMapping("/users/{id}")
     public UserDTO getById(@PathVariable UUID id) {
         return userService.getById(id);
-    }
-
-    @GetMapping("/allusers")
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
     }
 
     /** 
