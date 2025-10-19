@@ -61,6 +61,7 @@ export default function UserMediaPage({ mediaType }) {
     setItems((prev) => prev.filter((item) => item.id !== id));
   };
 
+  // Render loading or empty states
   if (loading) return <p>Loading your {mediaType}...</p>;
   if (items.length === 0) return <p>No {mediaType} saved yet.</p>;
 

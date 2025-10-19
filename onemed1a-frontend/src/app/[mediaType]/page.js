@@ -9,6 +9,11 @@ import {
   fetchJSON,
 } from "@/lib/mediaUtils";
 
+/**
+ * MediaPage component for displaying user's media collection by type.
+ * Merges user media statuses with external media data.
+ */
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -16,6 +21,7 @@ export default async function MediaPage({ params }) {
   const { mediaType: rawMediaType } = await params; // no need to await params here
   const mediaTypeKey = normalizeTypeKey(rawMediaType);
 
+  // Check for user authentication
   const cookieStore = await cookies();
   const accessTokenCookie = await cookieStore.get("access_token");
 
@@ -80,7 +86,7 @@ export default async function MediaPage({ params }) {
     return item;
   });
 
-  // Merge tracked statuses
+  // Merge tracked user media statuses
   const itemsMap = new Map();
   for (const it of externalItems) itemsMap.set(String(it.id), { ...it });
 
@@ -135,6 +141,7 @@ export default async function MediaPage({ params }) {
     if (umsInternal) aliasMap.set(umsInternal, canonical);
   }
 
+  // Final items array to render
   const items = [
     ...externalItems.map((it) => itemsMap.get(it.id)),
     ...Array.from(itemsMap.entries())
@@ -142,9 +149,7 @@ export default async function MediaPage({ params }) {
       .map(([_, v]) => v),
   ];
 
-  console.log(items.map((item) => item.coverUrl));
-  console.log(items.map((item) => item.posterUrl));
-
+  // Populate media grid display with media items
   return (
     <div className="p-4">
       <MediaGrid items={items} />

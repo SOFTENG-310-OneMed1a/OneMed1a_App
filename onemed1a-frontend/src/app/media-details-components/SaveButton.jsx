@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from "react";
 
+/**
+ * SaveButton component to save or remove media items from user's collection.
+ */
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
 export default function SaveButton({
@@ -34,6 +38,7 @@ export default function SaveButton({
 
         console.log("Saving media:", payload);
 
+        // Save media via POST
         const res = await fetch(`${API_BASE}/api/v1/usermedia`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -57,6 +62,7 @@ export default function SaveButton({
           return;
         }
 
+        // Delete media via DELETE
         const res = await fetch(`${API_BASE}/api/v1/usermedia/${statusId}`, {
           method: "DELETE",
         });
