@@ -45,8 +45,8 @@ async function fetchJSON(path, init) {
 }
 
 export default async function ProfilePage() {
-  const cookieStore = cookies();
-  const tokenCookie = cookieStore.get("access_token");
+  const cookieStore = await cookies();
+  const tokenCookie = await cookieStore.get("access_token");
 
   if (!tokenCookie) {
     redirect("/login");

@@ -55,11 +55,11 @@ function pickCover(
  * @param {{ params: Promise<{ mediaType: string }> }} props
  */
 export default async function MediaPage({ params }) {
-  const { mediaType: rawMediaType } = params; // no need to await params here
+  const { mediaType: rawMediaType } = await params; // no need to await params here
   const mediaTypeKey = normalizeTypeKey(rawMediaType);
 
-  const cookieStore = cookies();
-  const accessTokenCookie = cookieStore.get("access_token");
+  const cookieStore = await cookies();
+  const accessTokenCookie = await cookieStore.get("access_token");
 
   if (!accessTokenCookie) {
     redirect("/login");
