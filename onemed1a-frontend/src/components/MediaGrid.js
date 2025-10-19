@@ -4,10 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import Card from "./Card";
 
-/**
- * MediaGrid component to display a grid of media items (in Card) with infinite scroll.
- */
-
 const DEFAULT_PAGE_SIZE = 40;
 const OBS_ROOT_MARGIN = "800px 0px";
 
@@ -20,6 +16,9 @@ function colsFromWidth(w) {
   return 2;
 }
 
+/**
+ * MediaGrid component to display a grid of media items (in Card) with infinite scroll.
+ */
 export default function MediaGrid({
   items,
   pageSize = DEFAULT_PAGE_SIZE,
@@ -110,6 +109,7 @@ export default function MediaGrid({
     return buckets;
   }, [internalItems, visibleCount, cols]);
 
+  // Grid CSS classes
   const gridCols =
     "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4";
 
@@ -124,16 +124,7 @@ export default function MediaGrid({
           return (
             <div key={colKey} className="flex flex-col gap-4">
               {col.map((item, idx) => (
-                <Card
-                  key={item.id}
-                  item={item}
-                  saved={true} // These are already saved items
-                  onRemove={() => handleRemove(item.id)}
-                  userId={userId}
-                  statusId={item.id} // This is the user media status ID for deletion
-                  mediaId={item.externalMediaId} // This is the actual media ID (TMDB, etc.)
-                  mediaType={item.type}
-                />
+                <Card key={item.id} item={item} />
               ))}
             </div>
           );
@@ -144,6 +135,7 @@ export default function MediaGrid({
   );
 }
 
+// --- PropTypes and DefaultProps ---------------------------------------------
 MediaGrid.propTypes = {
   items: PropTypes.array.isRequired,
   pageSize: PropTypes.number,

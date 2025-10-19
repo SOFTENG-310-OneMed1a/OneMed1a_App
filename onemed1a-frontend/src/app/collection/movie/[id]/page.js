@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
@@ -10,6 +10,7 @@ import { getMediaById } from "@/api/mediaClient";
 import { cookies } from "next/headers";
 import { getStatus } from "@/api/mediaAPI";
 
+// --- Image helpers ---------------------------------------------------------
 const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/";
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
@@ -40,6 +41,8 @@ function pickCover(
   );
 }
 
+// --- Data fetchers ---------------------------------------------------------
+
 async function getMovie(id) {
   try {
     const movie = await getMediaById(id);
@@ -58,6 +61,8 @@ async function getMediaStatus(userId, mediaId) {
     return null;
   }
 }
+
+// --- Page ------------------------------------------------------------------
 
 export default async function MoviePage({ params }) {
   const { id } = await params; // await dynamic API
@@ -178,7 +183,7 @@ export default async function MoviePage({ params }) {
                 mediaId={movie.mediaId}
                 mediaType={"movie"}
                 statusId={result?.id}
-                saved={result !== null} // If result exists, it's saved
+                saved={result != null} // If result exists, it's saved
               />
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
@@ -62,6 +62,8 @@ async function getMediaStatus(userId, mediaId) {
     return null;
   }
 }
+
+// --- Page ------------------------------------------------------------------
 
 export default async function MusicPage({ params }) {
   const { id } = await params; // await dynamic API

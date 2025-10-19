@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
@@ -55,6 +55,7 @@ async function getMediaStatus(userId, mediaId) {
     return null; // Not in collection
   }
 }
+// --- Page ------------------------------------------------------------------
 
 export default async function TvShowPage({ params }) {
   const { id } = await params; // await dynamic API

@@ -6,10 +6,15 @@ import { pickCover, fetchJSON } from "@/lib/mediaUtils";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+/**
+ * UserMediaPage component to display user's saved media items of a specific type.
+ * Type is passed as a prop (e.g., "movie", "tv", "music", "books").
+ */
 export default async function UserMediaPage({ mediaType }) {
   const cookieStore = await cookies();
   const accessTokenCookie = cookieStore.get("access_token");
 
+  // Redirect to login if not authenticated
   if (!accessTokenCookie) {
     redirect("/login");
   }
@@ -23,6 +28,7 @@ export default async function UserMediaPage({ mediaType }) {
     cache: "no-store",
   });
 
+  // Redirect to login if profile fetch fails
   if (!res.ok) redirect("/login");
 
   const profile = await res.json();
@@ -34,6 +40,7 @@ export default async function UserMediaPage({ mediaType }) {
     `/api/v1/usermedia/user/${userId}?type=${mediaType.toUpperCase()}`
   );
 
+  // Map raw media data to items for MediaGrid
   const items = rawMedia.map((m) => {
     const tmdbBase = "https://image.tmdb.org/t/p/";
 
@@ -54,6 +61,7 @@ export default async function UserMediaPage({ mediaType }) {
     const normalizedPoster = normalize(posterPath, "w342");
     const normalizedBackdrop = normalize(backdropPath, "w780");
 
+    // Build saved item object
     return {
       id: m.id,
       externalMediaId: m.media.mediaId,
@@ -66,8 +74,7 @@ export default async function UserMediaPage({ mediaType }) {
     };
   });
 
-  console.log("Example item:", JSON.stringify(items[0], null, 2));
-
+  // Render MediaGrid or no items message
   if (items.length === 0) return <p>No {mediaType} saved yet.</p>;
 
   return (
