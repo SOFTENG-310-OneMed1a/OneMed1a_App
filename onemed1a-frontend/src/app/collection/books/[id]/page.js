@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import BackgroundImage from "@/app/media-details-components/BackgroundImage";
 import PosterImage from "@/app/media-details-components/PosterImage";
@@ -13,6 +13,7 @@ import { getStatus } from "@/api/mediaAPI";
 // --- Helpers ---------------------------------------------------------------
 
 const GOOGLE_BOOKS_BASE = "https://books.google.com";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
 /** Is already a full URL (http/https)? */
 function isFullUrl(v) {
@@ -70,7 +71,25 @@ async function getMediaStatus(userId, mediaId) {
 
 export default async function BookPage({ params }) {
   const { id } = await params; // await dynamic API
-  const userId = (await cookies()).get("userId")?.value; // await cookies()
+  const cookieStore = await cookies(); // Add await here
+  const tokenCookie = cookieStore.get("access_token"); // Remove await from this line
+
+  if (!tokenCookie) {
+    redirect("/login");
+  }
+
+  const cookieHeader = `access_token=${tokenCookie.value}`;
+
+  // Get user profile to get userId - use full URL
+  const profile = await fetch(`${API_BASE}/api/v1/getprofile`, {
+    headers: { cookie: cookieHeader },
+  }).then((res) => (res.ok ? res.json() : null));
+
+  if (!profile?.id) {
+    redirect("/login");
+  }
+
+  const userId = profile.id;
 
   const book = await getBook(id);
   if (!book) notFound();

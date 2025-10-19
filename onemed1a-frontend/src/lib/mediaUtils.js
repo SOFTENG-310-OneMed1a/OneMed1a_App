@@ -79,13 +79,13 @@ export function pickCover(
  * Generic JSON fetcher for backend API calls.
  */
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
-export async function fetchJSON(path) {
-  try {
-    const res = await fetch(`${API_BASE}${path}`, { cache: "no-store" });
-    if (!res.ok) return [];
-    return res.json();
-  } catch (e) {
-    console.error("fetchJSON error:", e);
-    return [];
+export async function fetchJSON(path, options = {}) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    cache: "no-store",
+    ...options, // <-- forward headers, method, etc.
+  });
+  if (!res.ok) {
+    throw new Error(`Fetch failed ${res.status}`);
   }
+  return res.json();
 }

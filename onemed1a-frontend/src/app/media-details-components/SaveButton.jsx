@@ -2,16 +2,12 @@
 
 import { useState, useEffect } from "react";
 
-/**
- * SaveButton component to save or remove media items from user's collection.
- */
-
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
 export default function SaveButton({
   userId,
-  mediaId, // The actual media ID (TMDB, etc.) - for saving
-  statusId, // The user media status ID - for deletion
+  mediaId,
+  statusId,
   mediaType = "movie",
   onRemove,
   saved: initialSaved = false,
@@ -19,10 +15,21 @@ export default function SaveButton({
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(initialSaved);
 
-  // Sync with initialSaved prop when it changes
   useEffect(() => {
     setSaved(initialSaved);
   }, [initialSaved]);
+
+  // Debug props
+  useEffect(() => {
+    console.log("SaveButton props:", {
+      userId,
+      mediaId,
+      statusId,
+      mediaType,
+      initialSaved,
+      saved,
+    });
+  }, [userId, mediaId, statusId, mediaType, initialSaved, saved]);
 
   async function handleToggle() {
     setSaving(true);
@@ -31,14 +38,13 @@ export default function SaveButton({
         // Save logic
         const payload = {
           userId,
-          mediaId, // This is the actual media ID
+          mediaId,
           type: mediaType.toUpperCase(),
           status: "PLAN_TO_WATCH",
         };
 
-        console.log("Saving media:", payload);
+        console.log("Saving with payload:", payload);
 
-        // Save media via POST
         const res = await fetch(`${API_BASE}/api/v1/usermedia`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -49,12 +55,14 @@ export default function SaveButton({
           const savedItem = await res.json();
           console.log("Save successful:", savedItem);
           setSaved(true);
+          // Refresh the page to show the updated state
+          window.location.reload();
         } else {
           const err = await res.text();
           console.error("Save failed", res.status, err);
         }
       } else {
-        // Remove from list - MUST use statusId for deletion
+        // Remove logic
         console.log("Deleting with statusId:", statusId);
 
         if (!statusId) {
@@ -62,7 +70,6 @@ export default function SaveButton({
           return;
         }
 
-        // Delete media via DELETE
         const res = await fetch(`${API_BASE}/api/v1/usermedia/${statusId}`, {
           method: "DELETE",
         });
@@ -70,7 +77,9 @@ export default function SaveButton({
         if (res.ok) {
           console.log("Delete successful");
           setSaved(false);
-          if (onRemove) onRemove(); // Call the parent's remove function
+          if (onRemove) onRemove();
+          // Refresh the page to show the updated state
+          window.location.reload();
         } else {
           const err = await res.text();
           console.error("Remove failed", res.status, err);
@@ -83,7 +92,6 @@ export default function SaveButton({
     }
   }
 
-  // Simple button text based on state
   const buttonText = saving
     ? "Saving..."
     : saved

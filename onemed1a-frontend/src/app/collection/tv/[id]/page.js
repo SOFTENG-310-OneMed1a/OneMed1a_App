@@ -13,6 +13,7 @@ import { getStatus } from "@/api/mediaAPI";
 // --- Image helpers ---------------------------------------------------------
 
 const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
 function isFullUrl(v) {
   return typeof v === "string" && /^https?:\/\//i.test(v);
@@ -56,8 +57,26 @@ async function getMediaStatus(userId, mediaId) {
 }
 
 export default async function TvShowPage({ params }) {
-  const { id } = await params;
-  const userId = (await cookies()).get("userId")?.value;
+  const { id } = await params; // await dynamic API
+  const cookieStore = await cookies(); // Add await here
+  const tokenCookie = cookieStore.get("access_token"); // Remove await from this line
+
+  if (!tokenCookie) {
+    redirect("/login");
+  }
+
+  const cookieHeader = `access_token=${tokenCookie.value}`;
+
+  // Get user profile to get userId - use full URL
+  const profile = await fetch(`${API_BASE}/api/v1/getprofile`, {
+    headers: { cookie: cookieHeader },
+  }).then((res) => (res.ok ? res.json() : null));
+
+  if (!profile?.id) {
+    redirect("/login");
+  }
+
+  const userId = profile.id;
 
   const show = await getTvShow(id);
   if (!show) notFound();

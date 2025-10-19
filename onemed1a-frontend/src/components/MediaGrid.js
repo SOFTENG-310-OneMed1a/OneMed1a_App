@@ -24,6 +24,7 @@ export default function MediaGrid({
   items,
   pageSize = DEFAULT_PAGE_SIZE,
   onRemove,
+  userId,
 }) {
   const data = Array.isArray(items) ? items : [];
   const [visibleCount, setVisibleCount] = useState(
@@ -128,7 +129,7 @@ export default function MediaGrid({
                   item={item}
                   saved={true} // These are already saved items
                   onRemove={() => handleRemove(item.id)}
-                  userId={getUserId()}
+                  userId={userId}
                   statusId={item.id} // This is the user media status ID for deletion
                   mediaId={item.externalMediaId} // This is the actual media ID (TMDB, etc.)
                   mediaType={item.type}

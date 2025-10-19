@@ -13,6 +13,7 @@ import { getStatus } from "@/api/mediaAPI";
 // --- Image helpers ---------------------------------------------------------
 
 const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
 /** already a fully-qualified URL? */
 function isFullUrl(v) {
@@ -64,7 +65,25 @@ async function getMediaStatus(userId, mediaId) {
 
 export default async function MusicPage({ params }) {
   const { id } = await params; // await dynamic API
-  const userId = (await cookies()).get("userId")?.value; // await cookies()
+  const cookieStore = await cookies(); // Add await here
+  const tokenCookie = cookieStore.get("access_token"); // Remove await from this line
+
+  if (!tokenCookie) {
+    redirect("/login");
+  }
+
+  const cookieHeader = `access_token=${tokenCookie.value}`;
+
+  // Get user profile to get userId - use full URL
+  const profile = await fetch(`${API_BASE}/api/v1/getprofile`, {
+    headers: { cookie: cookieHeader },
+  }).then((res) => (res.ok ? res.json() : null));
+
+  if (!profile?.id) {
+    redirect("/login");
+  }
+
+  const userId = profile.id;
 
   const album = await getAlbum(id);
   if (!album) notFound();

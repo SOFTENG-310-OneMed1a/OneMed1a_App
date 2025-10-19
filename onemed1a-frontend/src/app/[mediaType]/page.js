@@ -18,12 +18,12 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function MediaPage({ params }) {
-  const { mediaType: rawMediaType } = await params; // no need to await params here
+  const { mediaType: rawMediaType } = await params;
   const mediaTypeKey = normalizeTypeKey(rawMediaType);
 
   // Check for user authentication
   const cookieStore = await cookies();
-  const accessTokenCookie = await cookieStore.get("access_token");
+  const accessTokenCookie = cookieStore.get("access_token"); // Remove await here
 
   if (!accessTokenCookie) {
     redirect("/login");
@@ -33,15 +33,13 @@ export default async function MediaPage({ params }) {
   const cookieHeader = `access_token=${accessTokenCookie.value}`;
 
   // Fetch user profile from backend, forwarding cookies
-  const res = await fetch(
-    `${process.env.API_BASE || "http://localhost:8080"}/api/v1/getprofile`,
-    {
-      headers: {
-        cookie: cookieHeader,
-      },
-      cache: "no-store",
-    }
-  );
+  const API_BASE = process.env.API_BASE || "http://localhost:8080";
+  const res = await fetch(`${API_BASE}/api/v1/getprofile`, {
+    headers: {
+      cookie: cookieHeader,
+    },
+    cache: "no-store",
+  });
 
   if (!res.ok) {
     redirect("/login");
@@ -86,11 +84,12 @@ export default async function MediaPage({ params }) {
     return item;
   });
 
-  // Merge tracked user media statuses
+  // Merge tracked user media statuses - FIX: use mediaTypeKey instead of wantedType
   const itemsMap = new Map();
   for (const it of externalItems) itemsMap.set(String(it.id), { ...it });
 
-  for (const ums of raw.filter((ums) => ums?.media?.type === wantedType)) {
+  for (const ums of raw.filter((ums) => ums?.media?.type === mediaTypeKey)) {
+    // ← FIXED THIS LINE
     const m = ums.media ?? {};
     const umsInternal = m.mediaId ? String(m.mediaId) : null;
     const umsExternal = m.externalMediaId ? String(m.externalMediaId) : null;
