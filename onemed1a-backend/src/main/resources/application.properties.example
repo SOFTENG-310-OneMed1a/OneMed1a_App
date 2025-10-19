@@ -25,3 +25,7 @@ google.books.api.key=${GOOGLE_BOOKS_API_KEY}
 
 # OpenAI API Configuration
 open.api.key=${OPEN_API_KEY}
+
+# JWT Configuration
+jwt.secret=${JWT_SECRET}
+jwt.expiration=${JWT_EXPIRATION}
