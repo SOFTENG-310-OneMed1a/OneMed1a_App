@@ -15,7 +15,6 @@ function readField(fd, name, fallback = "") {
   return s.trim();
 }
 
-// optional: if your backend wants nulls for empty values
 function emptyToNull(s) {
   return s === "" ? null : s;
 }
