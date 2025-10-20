@@ -1,6 +1,7 @@
+// src/app/settings/page.jsx
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { updateProfile } from "./actions";
+import { updateProfile, uploadAvatar } from "./actions";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
@@ -14,10 +15,24 @@ async function fetchJSON(path, init) {
   }
 }
 
+function initials(name = "") {
+  return (
+    name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((s) => s[0]?.toUpperCase())
+      .join("") || "U"
+  );
+}
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default async function SettingsPage() {
+export default async function SettingsPage({ searchParams }) {
+  // await searchParams
+  const sp = await searchParams;
+
   const cookieStore = await cookies();
   const tokenCookie = await cookieStore.get("access_token");
   if (!tokenCookie) redirect("/login");
@@ -36,11 +51,76 @@ export default async function SettingsPage() {
   const region = profile?.region || profile?.preferences?.region || "NZ";
   const language = profile?.language || profile?.preferences?.language || "en";
   const theme = profile?.theme || profile?.preferences?.theme || "system";
+  const avatarUrl = profile?.avatarUrl || "";
+
+  const updatedOK = sp?.updated === "1";
+  const avatarOK = sp?.avatar === "1";
+  const errorKey = sp?.error;
 
   return (
     <div className="mx-auto max-w-3xl p-6 space-y-6">
-      <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Edit profile</h1>
+      <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
+        Edit profile
+      </h1>
 
+      {/* banners */}
+      {updatedOK && (
+        <div className="rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 p-3">
+          Profile updated successfully.
+        </div>
+      )}
+      {avatarOK && (
+        <div className="rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 p-3">
+          Profile picture updated.
+        </div>
+      )}
+      {errorKey && (
+        <div className="rounded-xl bg-rose-50 text-rose-800 border border-rose-200 p-3">
+          {errorKey === "upload"
+            ? "Failed to upload avatar. Please try again."
+            : errorKey === "nofile"
+            ? "Please choose an image file to upload."
+            : "Something went wrong."}
+        </div>
+      )}
+
+      {/* Avatar upload */}
+      <section className="rounded-2xl border border-slate-200 bg-white/70 p-4 backdrop-blur">
+        <h2 className="text-base font-medium mb-4">Profile picture</h2>
+
+        <div className="flex items-start gap-4">
+          <div className="h-24 w-24 rounded-2xl overflow-hidden bg-slate-200">
+                      {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={name}
+              className="h-24 w-24 rounded-2xl object-cover shadow"
+            />
+          ) : (
+            <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 grid place-items-center text-2xl font-semibold text-slate-700 shadow">
+              {initials(name)}
+            </div>
+          )}
+          </div>
+          <form action={uploadAvatar} className="flex items-center gap-3">
+            <input
+              type="file"
+              name="avatar"
+              accept="image/*"
+              className="rounded-xl border border-slate-300 px-3 py-2 text-sm"
+              required
+            />
+            <button
+              type="submit"
+              className="rounded-xl bg-black text-white px-4 py-2 text-sm hover:opacity-90"
+            >
+              Upload new picture
+            </button>
+          </form>
+        </div>
+      </section>
+
+      {/* Profile fields */}
       <form action={updateProfile} className="space-y-6">
         <section className="rounded-2xl border border-slate-200 bg-white/70 p-4 backdrop-blur">
           <h2 className="text-base font-medium mb-4">Basic info</h2>
@@ -60,13 +140,12 @@ export default async function SettingsPage() {
               <span className="text-sm text-slate-700">Avatar URL</span>
               <input
                 name="avatarUrl"
-                defaultValue={profile?.avatarUrl || ""}
+                defaultValue={avatarUrl}
                 className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
                 placeholder="https://..."
               />
             </label>
 
-            {/* If your API wants first/last separately, keep these fields */}
             <label className="block">
               <span className="text-sm text-slate-700">First name</span>
               <input
@@ -139,10 +218,7 @@ export default async function SettingsPage() {
           >
             Save changes
           </button>
-          <a
-            href="/profile"
-            className="text-sm text-slate-600 hover:text-black"
-          >
+          <a href="/profile" className="text-sm text-slate-600 hover:text-black">
             Cancel
           </a>
         </div>

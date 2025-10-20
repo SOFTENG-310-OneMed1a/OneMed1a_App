@@ -21,13 +21,13 @@ function emptyToNull(s) {
 }
 
 export async function updateProfile(formData) {
-  // 1) auth via cookie (same as your profile page)
+  //auth via cookie (same as your profile page)
   const cookieStore = await cookies();
   const tokenCookie = await cookieStore.get("access_token");
   if (!tokenCookie) redirect("/login");
   const cookieHeader = `access_token=${tokenCookie.value}`;
 
-  // 2) get current user id
+  // get current user id
   const meRes = await fetch(`${API_BASE}/api/v1/getprofile`, {
     headers: { cookie: cookieHeader },
     cache: "no-store",
@@ -36,7 +36,7 @@ export async function updateProfile(formData) {
   const me = await meRes.json().catch(() => null);
   if (!me?.id) redirect("/login");
 
-  // 3) build payload safely
+  // build payload safely
   const fullName  = emptyToNull(readField(formData, "fullName"));
   const firstName = emptyToNull(readField(formData, "firstName"));
   const lastName  = emptyToNull(readField(formData, "lastName"));
@@ -45,7 +45,6 @@ export async function updateProfile(formData) {
   const region    = readField(formData, "region", "NZ");
   const language  = readField(formData, "language", "en");
 
-  // If your API wants flat fields:
   const payload = {
     fullName,
     firstName,
@@ -56,13 +55,7 @@ export async function updateProfile(formData) {
     language,
   };
 
-  // If your API wants nested preferences, use this instead:
-  // const payload = {
-  //   fullName, firstName, lastName, avatarUrl,
-  //   preferences: { theme, region, language },
-  // };
-
-  // 4) send PATCH (change endpoint/method if your API differs)
+  // send PATCH (change endpoint/method if your API differs)
   const res = await fetch(`${API_BASE}/api/v1/users/${me.id}`, {
     method: "PATCH",
     headers: {
@@ -87,4 +80,49 @@ export async function updateProfile(formData) {
 
   // redirect with a success flag
   redirect("/profile?updated=1");
+}
+
+export async function uploadAvatar(formData) {
+  const cookieStore = await cookies();
+  const tokenCookie = await cookieStore.get("access_token");
+  if (!tokenCookie) redirect("/login");
+  const cookieHeader = `access_token=${tokenCookie.value}`;
+
+  // Who am I?
+  const meRes = await fetch(`${API_BASE}/api/v1/getprofile`, {
+    headers: { cookie: cookieHeader },
+    cache: "no-store",
+  });
+  if (!meRes.ok) redirect("/login");
+  const me = await meRes.json().catch(() => null);
+  if (!me?.id) redirect("/login");
+
+  // Get the file from the form
+  const file = formData.get("avatar");
+  if (!file || typeof file !== "object") {
+    redirect("/settings?error=nofile");
+  }
+
+  // Forward as multipart/form-data to your backend
+  const fd = new FormData();
+  // field name "file" depends on your backend API
+  fd.append("file", file, file.name || "avatar.jpg");
+
+  const res = await fetch(`${API_BASE}/api/v1/users/${me.id}/avatar`, {
+    method: "POST",
+    headers: { cookie: cookieHeader },
+    body: fd,
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    redirect("/settings?error=upload");
+  }
+
+  // Revalidate pages that show the avatar
+  revalidatePath("/profile");
+  revalidatePath("/settings");
+
+  // Stay on settings and show a little success flag
+  redirect("/settings?avatar=1");
 }
